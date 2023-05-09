@@ -36,9 +36,8 @@ def pipeline(api_key, working_memory):
                        pipeline_or_node=pipe,
                        description="Access this tool to find missing information needed to answer questions.",
                        output_variable="results")
-    print('working_memory',working_memory)
-    if not working_memory:
-        working_memory = []
+    # if not working_memory:
+    #     working_memory = []
     sensory_memory = []
     memory_node = MemoryRecallNode(memory=working_memory)
     memory_tool = Tool(name="Memory",
@@ -48,4 +47,4 @@ def pipeline(api_key, working_memory):
     memory_agent.add_tool(search_tool)
     memory_agent.add_tool(memory_tool)
     memory_utils = MemoryUtils(working_memory=working_memory, sensory_memory=sensory_memory, agent=memory_agent)
-    return memory_utils, working_memory
+    return memory_utils

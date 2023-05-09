@@ -15,11 +15,11 @@ Creating a chatBot using openAI. Here are few advantages.
 * Install [haystack](https://docs.haystack.deepset.ai/docs/installation) 
 
 ## Getting started
-Two end points have been implemented.  
+Three end points have been implemented.  
 * doc_ingestion: Insert document 
 * query: ask query to be responded by chat bot. 
 
-### doc_ingestion
+### documnet ingestion `/doc_ingestion`
 ```
 {
   "api_key": "string",
@@ -34,28 +34,34 @@ Following formats are allowed
 * pdf
 * docs
 
-### query
+### query tex `/query`
 ```
 {
   "api_key": "string",
   "text": "string",
-  "working_memory": [
-    "string"
-  ]
+  "session_id": string
 }
 ```
 
 text: query  
 apikey: openai api key  
-working_memory: a list of strings, responded by chatbot. In beginning this should be empty.
-Once user got the working_memory, send it back to the api.
+session_id: sessions are created. Each session represents new conversation and do not have memory of other sessions.
+
+### session deletion `/delete`
+
+user can delete session by providing seesion_id
+```
+{
+  "session_id": str
+}
+```
 
 
 ## TODOs
-- [ ]  Automate working_memory ingestion 
+- [X]  Automate working_memory ingestion 
 - [ ]  Integrate PostgreSQL
 - [ ]  Filter data (profanity/offensive language) at indexing
-- [ ]  Add validator the input
+- [ ]  Add validator to the input
 - [ ]  Cost analysis for the openAI api usage
 - [ ]  Allow OpenAI different models
 
