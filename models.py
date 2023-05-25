@@ -1,15 +1,74 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import Optional
 from fastapi import HTTPException
 from sqlmodel import Field, Session, SQLModel, create_engine, select
+import os
+import re
+
+def validate_uuid(uuid_string):
+    pattern = re.compile(
+        r'^[0-9a-fA-F]{8}-'
+        r'[0-9a-fA-F]{4}-'
+        r'[0-9a-fA-F]{4}-'
+        r'[0-9a-fA-F]{4}-'
+        r'[0-9a-fA-F]{12}$'
+        )
+    return re.match(pattern, uuid_string)
+
+
 class DocModel(BaseModel):
     api_key: str
     dir_path: str
 
+    @validator('api_key')
+    def validate_api_key(cls, api_key):
+        # Perform your validation logic here
+        if (len(api_key) != 51) or not api_key.startswith('sk'):
+            raise ValueError('The API is not valid')
+        return api_key
+
+    @validator('dir_path')
+    def validate_dir_path(cls, dir_path):
+        # Perform your validation logic here
+        if not os.path.exists(dir_path):
+            raise ValueError('Directory path must start with a forward slash')
+        return dir_path
+
 class QueryModel(BaseModel):
     api_key: str
     text: str
-    session_id: str # TODO uuid
+    session_id: str
+
+    @validator('api_key')
+    def validate_api_key(cls, api_key):
+        if len(api_key) != 51:
+            raise ValueError('API key must be 51 characters long')
+        if not api_key.startswith('sk'):
+            raise ValueError('API key must start with "sk"')
+        return api_key
+
+    @validator('text')
+    def validate_text(cls, text):
+        if not text:
+            raise ValueError('Text must be provided')
+        return text
+
+    @validator('session_id')
+    def validate_session_id(cls, session_id):
+        if not validate_uuid(session_id):
+            raise ValueError('Session ID must be in uuid4 format')
+        return session_id
+
+
+
+class DeleteSession(BaseModel):
+    session_id: str
+    @validator('session_id')
+    def validate_session_id(cls, session_id):
+        if not validate_uuid(session_id):
+            raise ValueError('Session ID must be in uuid4 format')
+        return session_id
+
 
 class QueryDB(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -30,8 +89,6 @@ def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 
-class DeleteSession(BaseModel):
-    session_id: str
 
 def load_history(session_id):
         """

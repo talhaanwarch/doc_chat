@@ -61,7 +61,7 @@ user can delete session by providing seesion_id
 - [X]  Automate working_memory ingestion 
 - [ ]  Integrate PostgreSQL
 - [ ]  Filter data (profanity/offensive language) at indexing
-- [ ]  Add validator to the input
+- [X]  Add validator to the input
 - [ ]  Cost analysis for the openAI api usage
 - [ ]  Allow OpenAI different models
 

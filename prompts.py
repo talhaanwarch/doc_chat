@@ -16,7 +16,7 @@ def pipeline(api_key, working_memory):
                         "Answer:"
         )
 
-    QA_builder = PromptNode(model_name_or_path="text-davinci-003",
+    QA_builder = PromptNode(model_name_or_path="gpt-3.5-turbo",
                             api_key=api_key,
                             default_prompt_template=QA_promptnode)
 
@@ -25,7 +25,7 @@ def pipeline(api_key, working_memory):
     pipe.add_node(component=QA_builder, name="Generator", inputs=["Retriever"])
 
     # Define the agent and tools
-    prompt_node = PromptNode(model_name_or_path="text-davinci-003",
+    prompt_node = PromptNode(model_name_or_path="gpt-3.5-turbo",
                                 api_key=api_key,
                                 max_length=512,
                                 stop_words=["Observation:"])
