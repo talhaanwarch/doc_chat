@@ -4,65 +4,115 @@
 Creating a chatBot using openAI. Here are few advantages.
 * The chatBot uses a Retriever-Generator base module to reduce costs.
   * The Retriever fetches the text of concern while the Generator creates a response from the fetched content.
-  * The Retriever can be replaced by any open source LLMs to reduce cost, but there is currently no such option for the Generator.
-* Embeddings are created once and stored in a Milvus vector database, saving cost if the same content is fed again.
-* Milvus and PostgreSQL are open source and their advantages can be read on their website.
+  * Any LLM model can be used but we are using gpt3.5 turbo.
+* Embeddings are created  and stored in a Milvus vector database.
+* History is stored in SQLite
 
 ## Prerequisite
 * Install [docker engine](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
 * Install [docker compose](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
 * Install and run [milvus](https://milvus.io/docs/install_standalone-docker.md)
-* Install [haystack](https://docs.haystack.deepset.ai/docs/installation) 
+* Install [langchain](https://python.langchain.com/en/latest/index.html) / [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/)
 
-## Getting started
-Three end points have been implemented.  
-* doc_ingestion: Insert document 
-* query: ask query to be responded by chat bot. 
+# API Documentation
 
-### documnet ingestion `/doc_ingestion`
+This documentation provides information about the API endpoints available in the FastAPI-based API.
+
+## Models
+
+### DocModel
+
+Represents the model for adding documents for ingestion.
+
+| Field             | Type              | Description                                   |
+| ----------------- | ----------------- | --------------------------------------------- |
+| dir_path          | str               | The directory path of the documents to ingest. |
+| collection_name   | Optional[str]     | The name of the collection (default: 'LangChainCollection'). |
+
+### QueryModel
+
+Represents the model for processing user queries.
+
+| Field             | Type              | Description                                   |
+| ----------------- | ----------------- | --------------------------------------------- |
+| text              | str               | The user's query text.                        |
+| session_id        | uuid4               | The session ID for tracking the conversation.  |
+| collection_name   | Optional[str]     | The name of the collection (default: 'LangChainCollection'). |
+
+### DeleteSession
+
+Represents the model for deleting a session from the database.
+
+| Field             | Type              | Description                                   |
+| ----------------- | ----------------- | --------------------------------------------- |
+| session_id        | uuid4               | The session ID to delete.                     |
+
+## Endpoints
+
+### `POST /doc_ingestion`
+
+Endpoint to add documents for ingestion.
+
+#### Request
+
+- Body Parameters:
+  - `doc` (DocModel): The document ingestion details.
+
+#### Response
+
+- Status Code: 200 (OK)
+- Body: `{"message": "Documents added successfully"}`
+
+### `POST /query`
+
+Endpoint to process user queries.
+
+#### Request
+
+- Body Parameters:
+  - `query` (QueryModel): The user query details.
+
+#### Response
+
+- Body: `{"answer": str, "cost": dict}`
+
+### `POST /delete`
+
+Endpoint to delete a session from the database.
+
+#### Request
+
+- Body Parameters:
+  - `session` (DeleteSession): The session deletion details.
+
+#### Response
+
+- Body: The response message indicating the success or failure of the deletion operation.
+
+## Example Usage
+
+### Adding Documents for Ingestion
+
+```bash
+$ curl -X POST -H "Content-Type: application/json" -d '{
+    "dir_path": "/path/to/documents"
+}' http://localhost:8000/doc_ingestion
 ```
-{
-  "api_key": "string",
-  "dir_path": "string"
-}
+
+### Processing User Queries
+
+```bash
+$ curl -X POST -H "Content-Type: application/json" -d '{
+    "text": "User query",
+    "session_id": "9c17659b-f3f6-45c5-8590-1a349102512b"
+}' http://localhost:8000/query
 ```
 
-dir_path: path of folder where your documents are present. 
-Example is `./data`  
-Following formats are allowed
-* txt
-* pdf
-* docs
+### Deleting a Session
 
-### query tex `/query`
+```bash
+$ curl -X POST -H "Content-Type: application/json" -d '{
+    "session_id": "9c17659b-f3f6-45c5-8590-1a349102512b"
+}' http://localhost:8000/delete
 ```
-{
-  "api_key": "string",
-  "text": "string",
-  "session_id": string
-}
-```
-
-text: query  
-apikey: openai api key  
-session_id: sessions are created. Each session represents new conversation and do not have memory of other sessions.
-
-### session deletion `/delete`
-
-user can delete session by providing seesion_id
-```
-{
-  "session_id": str
-}
-```
-
-
-## TODOs
-- [X]  Automate working_memory ingestion 
-- [ ]  Integrate PostgreSQL
-- [ ]  Filter data (profanity/offensive language) at indexing
-- [X]  Add validator to the input
-- [ ]  Cost analysis for the openAI api usage
-- [ ]  Allow OpenAI different models
-
 

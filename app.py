@@ -1,67 +1,64 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from data import *
-from prompts import pipeline
-from utils import document_store, retriever
-from models import *
-from sqlmodel import Session, select, delete
+
+from models import DocModel, QueryModel, DeleteSession
+from database import QueryDB, create_db_and_tables
+from vector_database import vector_db, db_conversation_chain
+from data import load_n_split
+from utils import count_tokens
+from chat_session import ChatSession
+
 app = FastAPI()
+chat_session = ChatSession()
 
 @app.on_event("startup")
-#create db and tables
 def on_startup():
+    """
+    Event handler called when the application starts up.
+    """
     create_db_and_tables()
 
 
-
-
-# Endpoint to inject documents
 @app.post("/doc_ingestion")
 def add_documents(doc: DocModel):
-    docs = read_data(doc.dir_path)
-    docs = preprocess(docs)
-    document_store.write_documents(docs, duplicate_documents='skip')
-    document_store.update_embeddings(retriever=retriever(doc.api_key), update_existing_embeddings=False)
+    """
+    Endpoint to add documents for ingestion.
+    """
+    docs = load_n_split(doc.dir_path)
+    _ = vector_db(docs, collection_name=doc.collection_name)
     return JSONResponse(content={"message": "Documents added successfully"})
 
 
-# Endpoint for user query
 @app.post("/query")
 def query(query: QueryModel):
-    # first check, do we have conversation for the session
-    # if yes, first get that memory
-    working_memory = load_history(query.session_id)
+    """
+    Endpoint to process user queries.
+    """
+    # Check if there is a conversation history for the session
+    working_memory = chat_session.load_history(query.session_id)
     if len(working_memory) == 0:
-        #if no, create an empty memory
-        working_memory =[]
-    memory_utils = pipeline(query.api_key, working_memory)
-    results = memory_utils.chat(query.text)
-    answer = results['answers'][0].answer
-    save_sess_db(query.session_id,
-                 query.text,
-                 answer)
-    return {'answer': answer}
+        working_memory = None
+    
+    # Get conversation chain
+    chain = db_conversation_chain(working_memory, collection_name=query.collection_name)
+    result, cost = count_tokens(chain, query.text)
+
+    # Save memory to disk
+    answer = result['answer']
+    chat_session.save_sess_db(query.session_id, query.text, answer)
+    return {'answer': answer, "cost": cost}
+
 
 @app.post("/delete")
-def delete_session(session:DeleteSession):
+def delete_session(session: DeleteSession):
     """
-    Deletes a session from the database.
+    Endpoint to delete a session from the database.
     """
-    session_id=session.session_id
-    if session_id  is None:
-        raise HTTPException(status_code=404, detail="Please provide session id")
+    response = chat_session.delete_sess_db(session.session_id)
+    return response
+   
 
-    with Session(engine) as session:
-
-        # if session id and client id is given then delete the particular session from the query database 
-        if session_id:
-            query = delete(QueryDB).where(QueryDB.session_id == session_id)
-            result = session.execute(query)
-            if result.rowcount == 0:
-                raise HTTPException(status_code=404, detail=f"Session id {session_id} not found")
-            session.commit()
-            return {'message':f"Session id {session_id} Deleted"}
 
 if __name__ == "__main__":
     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)

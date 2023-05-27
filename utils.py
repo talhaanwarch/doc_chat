@@ -1,17 +1,36 @@
-from haystack.nodes import EmbeddingRetriever
-from haystack.document_stores import MilvusDocumentStore
+from langchain.callbacks import get_openai_callback
+from pydantic import  BaseSettings
+from functools import lru_cache
 
-document_store = MilvusDocumentStore(
-    embedding_dim=1536,
-    duplicate_documents='skip',
-    sql_url="sqlite:///mydb.db")
+def count_tokens(chain, query):
+    """
+    Calculate cost assosiated
+    """
+    with get_openai_callback() as cb:
+        result = chain({"question":query})
+        print(f"Total Tokens: {cb.total_tokens}")
+        print(f"Prompt Tokens: {cb.prompt_tokens}")
+        print(f"Completion Tokens: {cb.completion_tokens}")
+        print(f"Total Cost (USD): ${cb.total_cost}")
+
+    return result, cb
 
 
-def retriever(api_key):
-    return EmbeddingRetriever(
-        document_store=document_store,
-        embedding_model="text-embedding-ada-002",
-        api_key=api_key,
-        max_seq_len=1024,
-        top_k=4,
-        )
+class Settings(BaseSettings):
+    """
+    Settings class for this application.
+    Utilizes the BaseSettings from pydantic for environment variables.
+    """
+
+    openai_api_key: str
+
+    class Config:
+        env_file = ".env"
+
+
+@lru_cache()
+def get_settings():
+    """Function to get and cache settings.
+    The settings are cached to avoid repeated disk I/O.
+    """
+    return Settings()
