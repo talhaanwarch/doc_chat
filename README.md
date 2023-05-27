@@ -4,7 +4,7 @@
 Creating a chatBot using openAI. Here are few advantages.
 * The chatBot uses a Retriever-Generator base module to reduce costs.
   * The Retriever fetches the text of concern while the Generator creates a response from the fetched content.
-  * Any LLM model can be used but we are using gpt3.5 turbo.
+  * Currently `gpt-3.5-turbo` is supported.
 * Embeddings are created  and stored in a Milvus vector database.
 * History is stored in SQLite
 
@@ -74,8 +74,18 @@ Endpoint to process user queries.
 
 #### Response
 
-- Body: `{"answer": str, "cost": dict}`
-
+- Body: `{"answer": str, "cost": dict, "source":list}`
+```
+-- answer : answer from the documents
+-- cost "cost": {
+    "successful_requests": int,
+    "total_cost": float,
+    "total_tokens": int,
+    "prompt_tokens": int,
+    "completion_tokens": int
+  },
+  --source: list of str showing source of extracted answer
+```
 ### `POST /delete`
 
 Endpoint to delete a session from the database.
@@ -116,3 +126,11 @@ $ curl -X POST -H "Content-Type: application/json" -d '{
 }' http://localhost:8000/delete
 ```
 
+## TODOs
+- [ ]  Change pre-defined prompt 
+- [ ]  Filter data (profanity/offensive language)
+- [ ]  Allow open-source LLMs
+- [ ]  Streaming response
+
+# Note:
+The Chatbot is also implemented using [haystack](https://github.com/talhaanwarch/openai-chatbot/tree/haystack)

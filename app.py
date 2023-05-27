@@ -43,11 +43,10 @@ def query(query: QueryModel):
     # Get conversation chain
     chain = db_conversation_chain(working_memory, collection_name=query.collection_name)
     result, cost = count_tokens(chain, query.text)
-
-    # Save memory to disk
+    sources = list(set([doc.metadata['source'] for doc in result['source_documents']]))
     answer = result['answer']
     chat_session.save_sess_db(query.session_id, query.text, answer)
-    return {'answer': answer, "cost": cost}
+    return {'answer': answer, "cost": cost,'source':sources}
 
 
 @app.post("/delete")
@@ -58,7 +57,5 @@ def delete_session(session: DeleteSession):
     response = chat_session.delete_sess_db(session.session_id)
     return response
    
-
-
 if __name__ == "__main__":
     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
