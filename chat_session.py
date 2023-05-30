@@ -1,6 +1,7 @@
-from database import engine, QueryDB
 from fastapi import HTTPException
-from sqlmodel import Session, delete, select
+from sqlmodel import Session, delete
+from database import engine, QueryDB
+
 
 class ChatSession:
     """
@@ -10,7 +11,8 @@ class ChatSession:
     @staticmethod
     def load_history(session_id):
         """
-        Loads a chat session from the database and returns a list of the conversation.
+        Loads a chat session from the database and returns a list
+            of the conversations.
 
         :param session_id: ID of the chat session
         :return: List containing query and responses from the database
@@ -19,17 +21,22 @@ class ChatSession:
             # Retrieve the conversation for the given session ID
             statement = f"SELECT * FROM querydb WHERE \
                 session_id = '{session_id}'"
-            # Execute the SQL statement to select all rows where the session and client match
+            # Execute the SQL statement to select all rows where
+            # the session and client match
             results = session.exec(statement)
             # Create a list from the result set
             results = [i for i in results]
-      
+          
         # Create a list of conversation entries from the results
         result = [
-            {'type': 'human', 'data': {'content': tup[1], 'additional_kwargs': {}, 'example': False}}
+            {'type': 'human', 'data': {'content': tup[1],
+                                       'additional_kwargs': {},
+                                       'example': False}}
             for tup in results
         ] + [
-            {'type': 'ai', 'data': {'content': tup[2], 'additional_kwargs': {}, 'example': False}}
+            {'type': 'ai', 'data': {'content': tup[2],
+                                    'additional_kwargs': {},
+                                    'example': False}}
             for tup in results
         ]
 
@@ -52,11 +59,16 @@ class ChatSession:
 
     @staticmethod
     def delete_sess_db(session_id):
+        """
+        Delete session from the database
+        :param session_id: ID of the chat session
+        """
         with Session(engine) as session:
             # Delete the specified session from the query database
             query = delete(QueryDB).where(QueryDB.session_id == session_id)
             result = session.execute(query)
             if result.rowcount == 0:
-                raise HTTPException(status_code=404, detail=f"Session id {session_id} not found")
+                raise HTTPException(status_code=404,
+                                    detail=f"Session id {session_id} not found")
             session.commit()
             return {'message': f"Session id {session_id} Deleted"}

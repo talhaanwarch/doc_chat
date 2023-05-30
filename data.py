@@ -2,6 +2,7 @@ from typing import List, Optional
 from langchain.docstore.document import Document
 from langchain.document_loaders import DirectoryLoader, TextLoader
 from llama_index.langchain_helpers.text_splitter import SentenceSplitter
+from langchain.text_splitter import TokenTextSplitter
 
 
 class CleanTextLoader(TextLoader):
@@ -33,13 +34,18 @@ class CleanTextLoader(TextLoader):
 
 
 
-def load_n_split(path):
+def load_n_split(path, splitter = "token"):
     """
     path: direcotry path having text files.
     Thus function read text files, clean it and then split it into chunks
     """
     loader = DirectoryLoader(path, glob="**/*.txt",loader_cls= CleanTextLoader)
     documents = loader.load()
-    text_splitter = SentenceSplitter(chunk_size=100, chunk_overlap=0)
+    if splitter == "sentence":
+        text_splitter = SentenceSplitter(chunk_size=100, chunk_overlap=0)
+    elif splitter == "token":
+        text_splitter = TokenTextSplitter(   chunk_size=80, chunk_overlap=20)
+    else:
+        print('invalid splitter')
     doct_text = text_splitter.split_documents(documents)
     return doct_text
