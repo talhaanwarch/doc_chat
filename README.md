@@ -1,7 +1,7 @@
-# Production level scalable ChatBot
+# Production level scalable document based ChatBot 
 
 ## About
-Creating a chatBot using openAI. Here are few advantages.
+Creating a chatBot using openAI which can fetch and respond from given documents. Here are few advantages.
 * The chatBot uses a Retriever-Generator base module to reduce costs.
   * The Retriever fetches the text of concern while the Generator creates a response from the fetched content.
   * Currently `gpt-3.5-turbo` is supported.
