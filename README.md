@@ -1,10 +1,11 @@
-# Production level scalable document based ChatBot 
+# Production level scalable Documents ChatBot
 
 ## About
-Creating a chatBot using openAI which can fetch and respond from given documents. Here are few advantages.
-* The chatBot uses a Retriever-Generator base module to reduce costs.
-  * The Retriever fetches the text of concern while the Generator creates a response from the fetched content.
-  * Currently `gpt-3.5-turbo` is supported.
+ChatBot to do conversation based on stored data provided by the user. 
+
+Here are few advantages.
+* The chatBot uses a Retriever-Generator base module to reduce costs. The Retriever fetches the text of concern while the Generator creates a response from the fetched content.
+* OpenAI GPT3.5, and open-source models are supported
 * Embeddings are created  and stored in a Milvus vector database.
 * History is stored in SQLite
 
@@ -13,6 +14,11 @@ Creating a chatBot using openAI which can fetch and respond from given documents
 * Install [docker compose](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
 * Install and run [milvus](https://milvus.io/docs/install_standalone-docker.md)
 * Install [langchain](https://python.langchain.com/en/latest/index.html) / [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/)
+* Download open-source model weights from [GPT4All](https://gpt4all.io/index.html). The models I have tested is 
+    
+    * ggml-gpt4all-j.bin (commercial licensable)     
+    * ggml-gpt4all-l13b-snoozy.bin (non-commercial licensable)
+* Put openAI API key in `example.env` in case if you want to use openAI model and replace `example.env` to `.env`
 
 # API Documentation
 
@@ -24,20 +30,23 @@ This documentation provides information about the API endpoints available in the
 
 Represents the model for adding documents for ingestion.
 
-| Field             | Type              | Description                                   |
-| ----------------- | ----------------- | --------------------------------------------- |
-| dir_path          | str               | The directory path of the documents to ingest. |
-| collection_name   | Optional[str]     | The name of the collection (default: 'LangChainCollection'). |
+| Field           | Type             | Description                                                |
+| --------------- | ---------------- | ---------------------------------------------------------- |
+| dir_path        | str              | The directory path of the documents to ingest.              |
+| embeddings_name | str (optional) | The name of the embeddings ['openai', 'sentence'] (default: 'openai').      |
+| collection_name | str (optional)   | The name of the collection (default: 'LangChainCollection').|
+| drop_existing_embeddings | bool (optional) | Whether to drop existing embeddings (default: False).    |
 
 ### QueryModel
 
 Represents the model for processing user queries.
 
-| Field             | Type              | Description                                   |
-| ----------------- | ----------------- | --------------------------------------------- |
-| text              | str               | The user's query text.                        |
-| session_id        | uuid4               | The session ID for tracking the conversation.  |
-| collection_name   | Optional[str]     | The name of the collection (default: 'LangChainCollection'). |
+| Field           | Type                                       | Description                                                |
+| --------------- | ------------------------------------------ | ---------------------------------------------------------- |
+| text            | str                                        | The text for the query.                                    |
+| session_id      | str                                        | The session ID for the query.                              |
+| llm_name        | str (optional) | The name of the language model ['openai', 'llamacpp', 'gpt4all'] (default: 'openai').       |
+| collection_name | str (optional)                             | The name of the collection (default: 'LangChainCollection').|
 
 ### DeleteSession
 
@@ -129,8 +138,9 @@ $ curl -X POST -H "Content-Type: application/json" -d '{
 ## TODOs
 - [ ]  Change pre-defined prompt 
 - [ ]  Filter data (profanity/offensive language)
-- [ ]  Allow open-source LLMs
+- [X]  Allow open-source LLMs
 - [ ]  Streaming response
+- [ ]  Make memory optional to speedup response. 
 
 # Note:
 The Chatbot is also implemented using [haystack](https://github.com/talhaanwarch/openai-chatbot/tree/haystack)
