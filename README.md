@@ -1,7 +1,7 @@
 # Production level scalable Documents ChatBot
 
 ## About
-Creating a chatBot using langchain that can do conversation based on stored data provided by the user. 
+ChatBot to do conversation based on stored data provided by the user. 
 
 Here are few advantages.
 * The chatBot uses a Retriever-Generator base module to reduce costs. The Retriever fetches the text of concern while the Generator creates a response from the fetched content.
