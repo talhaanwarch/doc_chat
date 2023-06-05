@@ -1,7 +1,9 @@
 # Production level scalable Documents ChatBot
 
 ## About
-ChatBot to do conversation based on stored data provided by the user. 
+ChatBot to do conversation based on stored data provided by the user. Here is flow diagram
+![image](https://github.com/talhaanwarch/doc_chat_api/assets/37379131/ebd2f33e-2383-4120-87ae-1f136e8334ef)
+
 
 Here are few advantages.
 * The chatBot uses a Retriever-Generator base module to reduce costs. The Retriever fetches the text of concern while the Generator creates a response from the fetched content.
