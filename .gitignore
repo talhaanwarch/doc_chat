@@ -6,4 +6,7 @@ __pycache__/
 *.env
 *.bin
 *.txt
+*.vscode
+*volumes
 !example.env
+!requirements.txt

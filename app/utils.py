@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     """
 
     openai_api_key: str
+    host: str
 
     class Config:
         env_file = ".env"

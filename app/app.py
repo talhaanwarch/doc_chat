@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from models import DocModel, QueryModel, DeleteSession
 from database import create_db_and_tables
-from vector_database import vector_db, db_conversation_chain
+from vector_database import vector_database, db_conversation_chain
 from data import load_n_split
 from utils import count_tokens
 from chat_session import ChatSession
@@ -26,7 +26,7 @@ def add_documents(doc: DocModel):
     Endpoint to add documents for ingestion.
     """
     docs = load_n_split(doc.dir_path)
-    _ = vector_db(docs, collection_name=doc.collection_name, 
+    _ = vector_database(doc_text=docs, collection_name=doc.collection_name, 
                   embeddings_name=doc.embeddings_name)
     return JSONResponse(content={"message": "Documents added successfully"})
 
@@ -67,5 +67,5 @@ def delete_session(session: DeleteSession):
     return response
 
 
-if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+# if __name__ == "__main__":
+#     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)

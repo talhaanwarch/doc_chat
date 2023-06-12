@@ -6,7 +6,7 @@ class QueryDB(SQLModel, table=True):
     answer: str
     session_id: str
 
-sqlite_file_name = "mydb.db"
+sqlite_file_name = "sqlite.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
 connect_args = {"check_same_thread": False}
