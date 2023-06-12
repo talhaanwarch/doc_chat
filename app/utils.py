@@ -2,12 +2,13 @@ from langchain.callbacks import get_openai_callback
 from pydantic import  BaseSettings
 from functools import lru_cache
 
+
 def count_tokens(chain, query):
     """
     Calculate cost assosiated
     """
     with get_openai_callback() as cb:
-        result = chain({"question":query})
+        result = chain({"question" :query})
         print(f"Total Tokens: {cb.total_tokens}")
         print(f"Prompt Tokens: {cb.prompt_tokens}")
         print(f"Completion Tokens: {cb.completion_tokens}")

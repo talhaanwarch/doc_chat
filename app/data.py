@@ -19,7 +19,7 @@ class CleanTextLoader(TextLoader):
         text = self.clean_text(text)
         metadata = {"source": self.file_path}
         return [Document(page_content=text, metadata=metadata)]
-    
+
     def clean_text(self, text):
         # remove leading and trailing whitespace from each line
         lines = (line.strip() for line in text.splitlines())
@@ -29,8 +29,6 @@ class CleanTextLoader(TextLoader):
         # remove two or more consecutive empty lines
         text = '\n'.join(line for line in text.splitlines() if line.strip())
         return text
-    
-
 
 
 def load_n_split(path, splitter = "token"):

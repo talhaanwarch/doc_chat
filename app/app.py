@@ -1,12 +1,13 @@
-import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+
 from models import DocModel, QueryModel, DeleteSession
 from database import create_db_and_tables
 from vector_database import vector_database, db_conversation_chain
 from data import load_n_split
-from utils import count_tokens
 from chat_session import ChatSession
+from utils import count_tokens
+
 
 app = FastAPI()
 chat_session = ChatSession()
@@ -26,8 +27,11 @@ def add_documents(doc: DocModel):
     Endpoint to add documents for ingestion.
     """
     docs = load_n_split(doc.dir_path)
-    _ = vector_database(doc_text=docs, collection_name=doc.collection_name, 
-                  embeddings_name=doc.embeddings_name)
+    _ = vector_database(
+        doc_text=docs,
+        collection_name=doc.collection_name,
+        embeddings_name=doc.embeddings_name
+    )
     return JSONResponse(content={"message": "Documents added successfully"})
 
 
@@ -42,20 +46,28 @@ def query_response(query: QueryModel):
         stored_memory = None
 
     # Get conversation chain
-    chain = db_conversation_chain(stored_memory=stored_memory,
-                                  llm_name=query.llm_name,
-                                  collection_name=query.collection_name)
+    chain = db_conversation_chain(
+        stored_memory=stored_memory,
+        llm_name=query.llm_name,
+        collection_name=query.collection_name
+    )
 
     if query.llm_name == 'openai':
         result, cost = count_tokens(chain, query.text)
     else:
         result = chain(query.text)
         cost = None
+
     sources = list(set([doc.metadata['source'] for doc in
                         result['source_documents']]))
     answer = result['answer']
     chat_session.save_sess_db(query.session_id, query.text, answer)
-    return {'answer': answer, "cost": cost, 'source': sources}
+
+    return {
+        'answer': answer,
+        "cost": cost,
+        'source': sources
+    }
 
 
 @app.post("/delete")
@@ -65,7 +77,3 @@ def delete_session(session: DeleteSession):
     """
     response = chat_session.delete_sess_db(session.session_id)
     return response
-
-
-# if __name__ == "__main__":
-#     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
