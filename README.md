@@ -1,14 +1,14 @@
 # Production level scalable Documents ChatBot
 
 ## About
-ChatBot to do conversation based on stored data provided by the user. Here is flow diagram
+ChatBot to do conversation based on stored data provided by the user. Here is a flow diagram
 ![image](https://github.com/talhaanwarch/doc_chat_api/assets/37379131/ebd2f33e-2383-4120-87ae-1f136e8334ef)
 
 
-Here are few advantages.
+Here are a few advantages.
 * The chatBot uses a Retriever-Generator base module to reduce costs. The Retriever fetches the text of concern while the Generator creates a response from the fetched content.
 * OpenAI GPT3.5, and open-source models are supported
-* Embeddings are created  and stored in a Milvus vector database.
+* Embeddings are created and stored in a Milvus vector database.
 * History is stored in SQLite
 
 ## Prerequisite
@@ -16,8 +16,7 @@ Here are few advantages.
 * Install [docker compose](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
 * Install and run [milvus](https://milvus.io/docs/install_standalone-docker.md). See bottom of page for more info.  
 * Install [langchain](https://python.langchain.com/en/latest/index.html) / [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/)
-* Download open-source model weights from [GPT4All](https://gpt4all.io/index.html). The models I have tested is 
-    
+* Download open-source model weights from [GPT4All](https://gpt4all.io/index.html). The models I have tested are
     * ggml-gpt4all-j.bin (commercial licensable)     
     * ggml-gpt4all-l13b-snoozy.bin (non-commercial licensable)
 * Put openAI API key in `example.env` in case if you want to use openAI model and replace `example.env` to `.env`
@@ -95,7 +94,7 @@ Endpoint to process user queries.
     "prompt_tokens": int,
     "completion_tokens": int
   },
-  --source: list of str showing source of extracted answer
+  --source: list of str showing the source of the extracted answer
 ```
 ### `POST /delete`
 
