@@ -14,7 +14,6 @@ from langchain.schema import messages_from_dict
 from utils import get_settings
 from prompts import prompt_doc, prompt_chat
 
-
 def vector_database(
               collection_name,
               drop_existing_embeddings=False,
@@ -55,7 +54,8 @@ def vector_database(
     else:
         vector_db = Milvus(
             embeddings,
-            collection_name=collection_name
+            collection_name=collection_name,
+            connection_args={"host": get_settings().host, "port": "19530"},
         )
     return vector_db
 

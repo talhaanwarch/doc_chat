@@ -46,7 +46,7 @@ Represents the model for processing user queries.
 | Field           | Type                                       | Description                                                |
 | --------------- | ------------------------------------------ | ---------------------------------------------------------- |
 | text            | str                                        | The text for the query.                                    |
-| session_id      | str                                        | The session ID for the query.                              |
+| session_id      | uuid4                                        | The session ID for the query.                              |
 | llm_name        | str (optional) | The name of the language model ['openai', 'llamacpp', 'gpt4all'] (default: 'openai').       |
 | collection_name | str (optional)                             | The name of the collection (default: 'LangChainCollection').|
 
