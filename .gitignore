@@ -5,8 +5,9 @@ __pycache__/
 *.db
 *.env
 *.bin
-*.txt
+# *.txt
 *.vscode
 *volumes
 !example.env
 !requirements.txt
+.vscode/settings.json
