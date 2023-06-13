@@ -14,7 +14,7 @@ Here are few advantages.
 ## Prerequisite
 * Install [docker engine](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
 * Install [docker compose](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
-* Install and run [milvus](https://milvus.io/docs/install_standalone-docker.md)
+* Install and run [milvus](https://milvus.io/docs/install_standalone-docker.md). See bottom of page for more info.  
 * Install [langchain](https://python.langchain.com/en/latest/index.html) / [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/)
 * Download open-source model weights from [GPT4All](https://gpt4all.io/index.html). The models I have tested is 
     
@@ -46,7 +46,7 @@ Represents the model for processing user queries.
 | Field           | Type                                       | Description                                                |
 | --------------- | ------------------------------------------ | ---------------------------------------------------------- |
 | text            | str                                        | The text for the query.                                    |
-| session_id      | str                                        | The session ID for the query.                              |
+| session_id      | uuid4                                        | The session ID for the query.                              |
 | llm_name        | str (optional) | The name of the language model ['openai', 'llamacpp', 'gpt4all'] (default: 'openai').       |
 | collection_name | str (optional)                             | The name of the collection (default: 'LangChainCollection').|
 
@@ -138,11 +138,20 @@ $ curl -X POST -H "Content-Type: application/json" -d '{
 ```
 
 ## TODOs
-- [ ]  Change pre-defined prompt 
+- [X]  Change pre-defined prompt 
 - [ ]  Filter data (profanity/offensive language)
 - [X]  Allow open-source LLMs
 - [ ]  Streaming response
 - [ ]  Make memory optional to speedup response. 
+- [X]  Add docker/docker compose
+
+
+# Guide to run
+```
+docker compose -f docker-compose.milvus.yml up -d
+docker compose -f docker-compose.app.yml up -d
+```
+
 
 # Note:
 The Chatbot is also implemented using [haystack](https://github.com/talhaanwarch/openai-chatbot/tree/haystack)

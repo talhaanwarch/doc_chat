@@ -87,15 +87,15 @@ class QueryModel(BaseModel):
             key = get_settings().openai_api_key
             if len(key) != 51 or not key.startswith('sk'):
                 raise ValueError('The API is not valid or not provided')
-  
+
         if llm_name == 'gpt4all':
             if not os.path.isfile('llms/ggml-gpt4all-j.bin'):
                 raise HTTPException(status_code=404, detail="Model weights are not found")
-   
+
         if llm_name == 'llamacpp':
             if not os.path.isfile('llms/ggml-gpt4all-l13b-snoozy.bin'):
                 raise HTTPException(status_code=404, detail="Model weights are not found")    
-              
+  
         return llm_name
 
 
