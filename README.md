@@ -148,8 +148,8 @@ $ curl -X POST -H "Content-Type: application/json" -d '{
 # Guide to run
 
 ```
-docker-compose -f docker-compose.milvus.yml up -d
-docker-compose -f docker-compose.app.yml up -d
+docker compose -f docker-compose.milvus.yml up -d
+docker compose -f docker-compose.app.yml up -d
 ```
 
 # Note:
