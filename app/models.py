@@ -1,5 +1,5 @@
 from pydantic import BaseModel, validator
-from typing import Optional, Literal
+from typing import Optional, Literal, List
 import os
 import re
 from fastapi import HTTPException
@@ -24,19 +24,19 @@ class DocModel(BaseModel):
     """
     Model for document processing.
     """
-    dir_path: str
+    urls: List[str]
     embeddings_name: Optional[Literal['openai', 'sentence']] = 'openai'
     collection_name: Optional[str] = 'LangChainCollection'
     drop_existing_embeddings: Optional[bool] = False
 
-    @validator('dir_path')
-    def validate_dir_path(cls, dir_path):
-        """
-        Validates the directory path.
-        """
-        if not os.path.exists(dir_path):
-            raise ValueError('Directory path must start with a forward slash')
-        return dir_path
+    @validator('urls')
+    def validate_urls(cls, urls):
+        if not isinstance(urls, list):
+            raise ValueError('Urls must be a list')
+        for url in urls:
+            if not isinstance(url, str):
+                raise ValueError('Urls must be a list of strings')
+        return urls
 
     @validator('embeddings_name')
     def validate_embeddings(cls, embeddings_name):
