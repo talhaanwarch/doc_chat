@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from models import DocModel, QueryModel, DeleteSession
 from database import create_db_and_tables
 from vector_database import vector_database, db_conversation_chain
-from data import load_n_split
+from data import TextProcessor
 from chat_session import ChatSession
 from utils import count_tokens
 
@@ -26,7 +26,7 @@ def add_documents(doc: DocModel):
     """
     Endpoint to add documents for ingestion.
     """
-    docs = load_n_split(doc.dir_path)
+    docs = TextProcessor(doc.urls).load_n_split()
     _ = vector_database(
         doc_text=docs,
         collection_name=doc.collection_name,
@@ -58,7 +58,7 @@ def query_response(query: QueryModel):
         result = chain(query.text)
         cost = None
 
-    sources = list(set([doc.metadata['source'] for doc in
+    sources = list(set([doc.metadata['source'].split('/')[-1] for doc in
                         result['source_documents']]))
     answer = result['answer']
     chat_session.save_sess_db(query.session_id, query.text, answer)

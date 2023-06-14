@@ -2,7 +2,8 @@ from typing import List, Optional
 from langchain.docstore.document import Document
 from langchain.document_loaders import DirectoryLoader, TextLoader
 from langchain.text_splitter import TokenTextSplitter
-
+import requests
+import tempfile
 
 class CleanTextLoader(TextLoader):
     """Load text files."""
@@ -31,16 +32,39 @@ class CleanTextLoader(TextLoader):
         return text
 
 
-def load_n_split(path, splitter = "token"):
-    """
-    path: direcotry path having text files.
-    Thus function read text files, clean it and then split it into chunks
-    """
-    loader = DirectoryLoader(path, glob="**/*.txt",loader_cls= CleanTextLoader)
-    documents = loader.load() 
-    if splitter == "token":
-        text_splitter = TokenTextSplitter(   chunk_size=80, chunk_overlap=20)
-    else:
-        print('invalid splitter')
-    doct_text = text_splitter.split_documents(documents)
-    return doct_text
+class TextProcessor:
+    def __init__(self, urls: list[str], text_splitter: Optional[str] = "token"):
+        self.text_splitter = text_splitter
+        self.urls = urls
+
+    def download_text_files(self, urls):
+        """
+        Download files in a temp directory.
+        Then read the file using langchain loader. 
+        By simply changing the loader we can load different types of files
+        """
+        docs = []
+        for url in urls:
+            response = requests.get(url, timeout=30)
+            if response.status_code == 200:
+                with tempfile.TemporaryDirectory() as temp_dir:
+                    file_path = f"{temp_dir}/{url.split('/')[-1]}"
+                    with open(file_path, "w") as f:
+                        f.write(response.text)
+                    loader = CleanTextLoader(file_path)
+                    docs.append(loader.load()[0])
+        return docs
+
+    def load_n_split(self):
+        """
+        path: directory path having text files.
+        This function reads text files, cleans them, and then splits them into chunks.
+        """
+        documents = self.download_text_files(self.urls)
+        if self.text_splitter == "token":
+            text_splitter = TokenTextSplitter(chunk_size=80, chunk_overlap=20)
+        else:
+            print('Invalid splitter')
+        doc_text = text_splitter.split_documents(documents)
+        return doc_text
+    

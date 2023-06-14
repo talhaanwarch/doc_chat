@@ -16,7 +16,7 @@ Here are few advantages.
 * Install [docker compose](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
 * Install and run [milvus](https://milvus.io/docs/install_standalone-docker.md). See bottom of page for more info.  
 * Install [langchain](https://python.langchain.com/en/latest/index.html) / [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/)
-* Download open-source model weights from [GPT4All](https://gpt4all.io/index.html). The models I have tested is 
+* Download open-source model weights from [GPT4All](https://gpt4all.io/index.html) and place in llms folder. The models I have tested is 
     
     * ggml-gpt4all-j.bin (commercial licensable)     
     * ggml-gpt4all-l13b-snoozy.bin (non-commercial licensable)
@@ -34,7 +34,7 @@ Represents the model for adding documents for ingestion.
 
 | Field           | Type             | Description                                                |
 | --------------- | ---------------- | ---------------------------------------------------------- |
-| dir_path        | str              | The directory path of the documents to ingest.              |
+| urls        | list[str]              | List having urls of doc files.              |
 | embeddings_name | str (optional) | The name of the embeddings ['openai', 'sentence'] (default: 'openai').      |
 | collection_name | str (optional)   | The name of the collection (default: 'LangChainCollection').|
 | drop_existing_embeddings | bool (optional) | Whether to drop existing embeddings (default: False).    |
@@ -116,7 +116,7 @@ Endpoint to delete a session from the database.
 
 ```bash
 $ curl -X POST -H "Content-Type: application/json" -d '{
-    "dir_path": "/path/to/documents"
+    "urls": "[https://doc_url_1.txt, https://doc_url_2.txt]"
 }' http://localhost:8000/doc_ingestion
 ```
 
