@@ -3,13 +3,10 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.memory.chat_message_histories.in_memory import ChatMessageHistory
 from langchain.chat_models import ChatOpenAI
 from utils import get_settings
-from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from fastapi import HTTPException
 import pymilvus
-from langchain.llms import GPT4All
-
 from langchain.schema import messages_from_dict
 from utils import get_settings
 from prompts import prompt_doc, prompt_chat
@@ -34,7 +31,11 @@ def vector_database(
     if embeddings_name == 'openai':
         embeddings = OpenAIEmbeddings(openai_api_key=get_settings().openai_api_key)
     elif embeddings_name == 'sentence':
-        embeddings = HuggingFaceEmbeddings()
+        try:
+            from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+            embeddings = HuggingFaceEmbeddings()
+        except:
+            raise("Install sentence-transformers and gpt4all")
     else:
         print('invalid embeddings')
     if doc_text:
@@ -88,18 +89,26 @@ def db_conversation_chain(llm_name, stored_memory, collection_name):
         embeddings_name = 'openai'
 
     elif llm_name == 'gpt4all':
-        llm = GPT4All(
-            model='llms/ggml-gpt4all-j.bin', 
-            n_ctx=1000, 
-            verbose=True)
-        embeddings_name = "sentence"
+        try:
+            from langchain.llms import GPT4All
+            llm = GPT4All(
+                model='llms/ggml-gpt4all-j.bin', 
+                n_ctx=1000, 
+                verbose=True)
+            embeddings_name = "sentence"
+        except:
+            print("Install sentence-transformers and gpt4all")
 
     elif llm_name == 'llamacpp':
-        llm = GPT4All(
-            model='llms/ggml-gpt4all-l13b-snoozy.bin', 
-            n_ctx=1000, 
-            verbose=True)
-        embeddings_name = "sentence"
+        try:
+            from langchain.llms import GPT4All
+            llm = GPT4All(
+                model='llms/ggml-gpt4all-l13b-snoozy.bin', 
+                n_ctx=1000, 
+                verbose=True)
+            embeddings_name = "sentence"
+        except:
+            print("Install sentence-transformers and gpt4all")
 
     vector_db = vector_database(
         collection_name=collection_name,

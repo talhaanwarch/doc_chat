@@ -6,15 +6,24 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    networks:
+      - milvus
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    env_file:
+      - .env
     volumes:
-      - "database:/sqlite.db"
+      - sqldb:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
     networks:
       - milvus
 
 volumes:
-  database:
+  sqldb:
 
 networks:
   milvus:
     external: true
-
