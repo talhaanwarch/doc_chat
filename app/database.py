@@ -1,23 +1,26 @@
-from sqlmodel import Field, SQLModel, create_engine
-from typing import Optional
+from sqlalchemy import Column, Integer, String, create_engine, delete, Float
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+Base = declarative_base()
+
+# Replace the connection string with your PostgreSQL details
+postgresql_url = "postgresql://postgres:talha1234@localhost:5432/sparkdb"
+engine = create_engine(postgresql_url)
+SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 
-class QueryDB(SQLModel, table=True):
-    """
-    Database class to store query and answer in database
-    """
-    id: Optional[int] = Field(default=None, primary_key=True)
-    query: str
-    answer: str
-    session_id: str
+class QueryDB(Base):
+    __tablename__ = "querydb"
 
-
-sqlite_file_name = "sqlite.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
-
-connect_args = {"check_same_thread": False}
-engine = create_engine(sqlite_url, echo=False, connect_args=connect_args)
-
+    id = Column(Integer, primary_key=True)
+    query = Column(String)
+    answer = Column(String)
+    session_id = Column(String)
+    total_tokens = Column(Integer)
+    prompt_tokens = Column(Integer)
+    completion_tokens = Column(Integer)
+    total_cost = Column(Float)
 
 def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+    Base.metadata.create_all(bind=engine)

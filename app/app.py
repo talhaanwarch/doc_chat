@@ -61,7 +61,7 @@ def query_response(query: QueryModel):
     sources = list(set([doc.metadata['source'].split('/')[-1] for doc in
                         result['source_documents']]))
     answer = result['answer']
-    chat_session.save_sess_db(query.session_id, query.text, answer)
+    chat_session.save_sess_db(query.session_id, query.text, answer, cost)
 
     return {
         'answer': answer,

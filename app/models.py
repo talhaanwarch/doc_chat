@@ -4,6 +4,7 @@ import os
 import re
 from fastapi import HTTPException
 from utils import get_settings
+import uuid
 
 
 def validate_uuid(uuid_string):
@@ -56,7 +57,7 @@ class QueryModel(BaseModel):
     """
 
     text: str
-    session_id: str
+    session_id: str = str(uuid.uuid4())
     llm_name: Optional[Literal['openai', 'llamacpp', 'gpt4all']] = 'openai'
     collection_name: Optional[str] = 'LangChainCollection'
 
