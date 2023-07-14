@@ -12,3 +12,4 @@ __pycache__/
 !requirements.txt
 .vscode/settings.json
 notebooks
+*.ipynb_checkpoints/

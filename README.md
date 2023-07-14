@@ -9,7 +9,7 @@ Here are few advantages.
 * The chatBot uses a Retriever-Generator base module to reduce costs. The Retriever fetches the text of concern while the Generator creates a response from the fetched content.
 * OpenAI GPT3.5, and open-source models are supported
 * Embeddings are created  and stored in a Milvus vector database.
-* History is stored in SQLite
+* History is stored in PostgreSQL
 
 ## Prerequisite
 * Install [docker engine](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
@@ -136,14 +136,6 @@ $ curl -X POST -H "Content-Type: application/json" -d '{
     "session_id": "9c17659b-f3f6-45c5-8590-1a349102512b"
 }' http://localhost:8000/delete
 ```
-
-## TODOs
-- [X]  Change pre-defined prompt 
-- [ ]  Filter data (profanity/offensive language)
-- [X]  Allow open-source LLMs
-- [ ]  Streaming response
-- [ ]  Make memory optional to speedup response. 
-- [X]  Add docker/docker compose
 
 
 # Guide to run
