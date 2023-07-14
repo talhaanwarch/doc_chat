@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlmodel import Session, delete
+# from sqlmodel import Session, delete
 from database import SessionLocal, QueryDB
 
 
