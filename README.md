@@ -14,7 +14,8 @@ Here are few advantages.
 ## Prerequisite
 * Install [docker engine](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
 * Install [docker compose](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
-* Install and run [milvus](https://milvus.io/docs/install_standalone-docker.md). See bottom of page for more info.  
+* Install and run [milvus](https://milvus.io/docs/install_standalone-docker.md). See guide to run for more info.  
+* Install and run [tooljet](https://docs.tooljet.com/docs/setup/docker/). See guide to run for more info.  
 * Install [langchain](https://python.langchain.com/en/latest/index.html) / [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/)
 * Download open-source model weights from [GPT4All](https://gpt4all.io/index.html) and place in llms folder. The models I have tested is 
     
@@ -140,8 +141,9 @@ $ curl -X POST -H "Content-Type: application/json" -d '{
 
 # Guide to run
 ```
-docker compose -f docker-compose.milvus.yml up -d
-docker compose -f docker-compose.app.yml up -d
+docker compose -f docker-compose.milvus.yml up --build -d
+docker compose -f docker-compose.app.yml up --build -d
+docker compose -f docker-compose.tooljet.yml up --build -d
 ```
 
 
