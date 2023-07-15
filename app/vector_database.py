@@ -45,7 +45,7 @@ def vector_database(
                 embeddings,
                 collection_name=collection_name,
                 drop_old=drop_existing_embeddings,
-                connection_args={"host": get_settings().host, "port": "19530"},
+                connection_args={"host": get_settings().milvus_host, "port": "19530"},
                 # if we want to communicate between two dockers then instead of local 
                 # host we need to use milvus-standalone
             )
@@ -56,7 +56,7 @@ def vector_database(
         vector_db = Milvus(
             embeddings,
             collection_name=collection_name,
-            connection_args={"host": get_settings().host, "port": "19530"},
+            connection_args={"host": get_settings().milvus_host, "port": "19530"},
         )
     return vector_db
 

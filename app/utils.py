@@ -24,7 +24,12 @@ class Settings(BaseSettings):
     """
 
     openai_api_key: str
-    host: str
+    milvus_host: str
+    postgres_db: str
+    postgres_user: str
+    postgres_host: str
+    postgres_password: str
+    postgres_port: int
 
     class Config:
         env_file = ".env"

@@ -1,21 +1,18 @@
 from sqlalchemy import Column, Integer, String, create_engine, delete, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
-import os
-# Load environment variables from .env file
-load_dotenv()
+from utils import get_settings
 
 
 Base = declarative_base()
 
 
 # Retrieve the PostgreSQL credentials from environment variables
-db_host = os.getenv('POSTGRES_HOST')
-db_port = os.getenv('POSTGRES_PORT')
-db_name = os.getenv('POSTGRES_DB')
-db_user = os.getenv('POSTGRES_USER')
-db_password = os.getenv('POSTGRES_PASSWORD')
+db_host = get_settings().postgres_host
+db_port = get_settings().postgres_port
+db_name = get_settings().postgres_db
+db_user = get_settings().postgres_user
+db_password = get_settings().postgres_password
 
 # Construct the PostgreSQL URL
 postgresql_url = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
@@ -31,9 +28,11 @@ class QueryDB(Base):
     __tablename__ = "querydb"
 
     id = Column(Integer, primary_key=True)
+    session_id = Column(String)
+    client_id = Column(String)
     query = Column(String)
     answer = Column(String)
-    session_id = Column(String)
+    
     total_tokens = Column(Integer)
     prompt_tokens = Column(Integer)
     completion_tokens = Column(Integer)

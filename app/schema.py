@@ -58,6 +58,7 @@ class QueryModel(BaseModel):
 
     text: str
     session_id: str = str(uuid.uuid4())
+    client_id: str = str(uuid.uuid4())
     llm_name: Optional[Literal['openai', 'llamacpp', 'gpt4all']] = 'openai'
     collection_name: Optional[str] = 'LangChainCollection'
 

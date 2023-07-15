@@ -1,4 +1,4 @@
-# Production level scalable Documents ChatBot
+# Production level scalable Documents ChatBot with a customizable dashboard
 
 ## About
 ChatBot to do conversation based on stored data provided by the user. Here is a flow diagram
@@ -8,19 +8,28 @@ ChatBot to do conversation based on stored data provided by the user. Here is a 
 Here are a few advantages.
 * The chatBot uses a Retriever-Generator base module to reduce costs. The Retriever fetches the text of concern while the Generator creates a response from the fetched content.
 * OpenAI GPT3.5, and open-source models are supported
-* Embeddings are created and stored in a Milvus vector database.
-* History is stored in SQLite
+
+* Embeddings are created  and stored in a Milvus vector database.
+* History is stored in PostgreSQL
+
 
 ## Prerequisite
 * Install [docker engine](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
 * Install [docker compose](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
-* Install and run [milvus](https://milvus.io/docs/install_standalone-docker.md). See bottom of page for more info.  
+* Install and run [milvus](https://milvus.io/docs/install_standalone-docker.md). See guide to run for more info.  
+* Install and run [tooljet](https://docs.tooljet.com/docs/setup/docker/). See guide to run for more info.  
 * Install [langchain](https://python.langchain.com/en/latest/index.html) / [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/)
 
 * Download open-source model weights from [GPT4All](https://gpt4all.io/index.html) and place in llms folder. The models I have tested are 
     * ggml-gpt4all-j.bin (commercial licensable)     
     * ggml-gpt4all-l13b-snoozy.bin (non-commercial licensable)
 * Put openAI API key in `example.env` in case if you want to use openAI model and replace `example.env` to `.env`
+ # Dashbaord
+Dashboard is accessible at port 8005.  
+This is simplest dashboard that display the usage.
+
+![dasboard](imgs/dashboard.png)
+
 
 # API Documentation
 
@@ -137,20 +146,13 @@ $ curl -X POST -H "Content-Type: application/json" -d '{
 }' http://localhost:8000/delete
 ```
 
-## TODOs
-- [X]  Change pre-defined prompt 
-- [ ]  Filter data (profanity/offensive language)
-- [X]  Allow open-source LLMs
-- [ ]  Streaming response
-- [ ]  Make memory optional to speedup response. 
-- [X]  Add docker/docker compose
-
 
 # Guide to run
 
 ```
-docker compose -f docker-compose.milvus.yml up -d
-docker compose -f docker-compose.app.yml up -d
+docker compose -f docker-compose.milvus.yml up --build -d
+docker compose -f docker-compose.app.yml up --build -d
+docker compose -f docker-compose.tooljet.yml up --build -d
 ```
 
 # Note:
