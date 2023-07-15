@@ -22,6 +22,12 @@ Here are few advantages.
     * ggml-gpt4all-j.bin (commercial licensable)     
     * ggml-gpt4all-l13b-snoozy.bin (non-commercial licensable)
 * Put openAI API key in `example.env` in case if you want to use openAI model and replace `example.env` to `.env`
+ # Dashbaord
+Dashboard is accessible at port 8005.  
+This is simplest dashboard that display the usage.
+
+![dasboard](imgs/dashboard.png)
+
 
 # API Documentation
 

@@ -28,9 +28,11 @@ class QueryDB(Base):
     __tablename__ = "querydb"
 
     id = Column(Integer, primary_key=True)
+    session_id = Column(String)
+    client_id = Column(String)
     query = Column(String)
     answer = Column(String)
-    session_id = Column(String)
+    
     total_tokens = Column(Integer)
     prompt_tokens = Column(Integer)
     completion_tokens = Column(Integer)

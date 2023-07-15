@@ -25,9 +25,9 @@ class ChatSession:
         return result
 
     @staticmethod
-    def save_sess_db(session_id, query, answer, cost):
+    def save_sess_db(client_id, session_id, query, answer, cost):
         
-        db = QueryDB(query=query, answer=answer, session_id=session_id, 
+        db = QueryDB(query=query, answer=answer, session_id=session_id, client_id=client_id, 
                      total_tokens=cost.total_tokens, prompt_tokens=cost.prompt_tokens,
                      completion_tokens=cost.completion_tokens, total_cost=cost.total_cost
                      )

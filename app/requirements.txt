@@ -10,6 +10,5 @@ pymilvus==2.2.8
 python-dotenv==1.0.0
 tiktoken==0.4.0
 # gpt4all==0.3.0
-alembic
 psycopg2-binary
 sqlalchemy
