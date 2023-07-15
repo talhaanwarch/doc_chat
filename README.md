@@ -1,4 +1,4 @@
-# Production level scalable Documents ChatBot
+# Production level scalable Documents ChatBot with a customizable dashboard
 
 ## About
 ChatBot to do conversation based on stored data provided by the user. Here is flow diagram
