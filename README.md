@@ -45,7 +45,7 @@ Represents the model for adding documents for ingestion.
 | --------------- | ---------------- | ---------------------------------------------------------- |
 | urls        | list[str]              | List having urls of doc files.              |
 | embeddings_name | str (optional) | The name of the embeddings ['openai', 'sentence'] (default: 'openai').      |
-| collection_name | str (optional)   | The name of the collection (default: 'LangChainCollection').|
+| client_id | EmailID   | Email ID of the user (server as a collection ID in milvus) |
 | drop_existing_embeddings | bool (optional) | Whether to drop existing embeddings (default: False).    |
 
 ### QueryModel
@@ -57,7 +57,7 @@ Represents the model for processing user queries.
 | text            | str                                        | The text for the query.                                    |
 | session_id      | uuid4                                        | The session ID for the query.                              |
 | llm_name        | str (optional) | The name of the language model ['openai', 'llamacpp', 'gpt4all'] (default: 'openai').       |
-| collection_name | str (optional)                             | The name of the collection (default: 'LangChainCollection').|
+| client_id | EmailID   | Email ID of the user (server as a collection ID in milvus) |
 
 ### DeleteSession
 
@@ -124,18 +124,33 @@ Endpoint to delete a session from the database.
 ### Adding Documents for Ingestion
 
 ```bash
-$ curl -X POST -H "Content-Type: application/json" -d '{
-    "urls": "[https://doc_url_1.txt, https://doc_url_2.txt]"
-}' http://localhost:8000/doc_ingestion
+$ curl -X 'POST' \
+  'http://0.0.0.0:8000/doc_ingestion' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "urls": [
+    "https://raw.githubusercontent.com/talhaanwarch/doc_chat_api/main/data/0.txt"
+  ],
+  "client_id": "admin@admin.com",
+  "embeddings_name": "openai",
+  "drop_existing_embeddings": false
+}'
 ```
 
 ### Processing User Queries
 
 ```bash
-$ curl -X POST -H "Content-Type: application/json" -d '{
-    "text": "User query",
-    "session_id": "9c17659b-f3f6-45c5-8590-1a349102512b"
-}' http://localhost:8000/query
+$ curl -X 'POST' \
+  'http://0.0.0.0:8000/query' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "text": "What is quadratic funding?",
+  "session_id": "824dcfc3-9ee2-40d7-bb2e-693fbc7696ca",
+  "client_id": "admin@admin.com",
+  "llm_name": "openai"
+}'
 ```
 
 ### Deleting a Session

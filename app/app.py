@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+import shortuuid
 
 from schema import DocModel, QueryModel, DeleteSession
 from database import create_db_and_tables
@@ -29,7 +30,7 @@ def add_documents(doc: DocModel):
     docs = TextProcessor(doc.urls).load_n_split()
     _ = vector_database(
         doc_text=docs,
-        collection_name=doc.collection_name,
+        collection_name=shortuuid.uuid(doc.client_id),
         embeddings_name=doc.embeddings_name
     )
     return JSONResponse(content={"message": "Documents added successfully"})
@@ -49,7 +50,7 @@ def query_response(query: QueryModel):
     chain = db_conversation_chain(
         stored_memory=stored_memory,
         llm_name=query.llm_name,
-        collection_name=query.collection_name
+        collection_name=shortuuid.uuid(query.client_id)
     )
 
     if query.llm_name == 'openai':
@@ -61,7 +62,8 @@ def query_response(query: QueryModel):
     sources = list(set([doc.metadata['source'].split('/')[-1] for doc in
                         result['source_documents']]))
     answer = result['answer']
-    chat_session.save_sess_db(query.client_id, query.session_id, query.text, answer, cost)
+    chat_session.save_sess_db(shortuuid.uuid(query.client_id), 
+                              query.session_id, query.text, answer, cost)
 
     return {
         'answer': answer,
