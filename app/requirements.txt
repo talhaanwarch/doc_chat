@@ -12,3 +12,5 @@ tiktoken==0.4.0
 # gpt4all==0.3.0
 psycopg2-binary
 sqlalchemy
+shortuuid
+email-validator

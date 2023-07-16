@@ -1,12 +1,10 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, EmailStr
 from typing import Optional, Literal, List
 import os
 import re
 from fastapi import HTTPException
 from utils import get_settings
 import uuid
-
-
 def validate_uuid(uuid_string):
     """
     Regex pattern to validate uuid
@@ -26,8 +24,9 @@ class DocModel(BaseModel):
     Model for document processing.
     """
     urls: List[str]
+    client_id: EmailStr = EmailStr()
     embeddings_name: Optional[Literal['openai', 'sentence']] = 'openai'
-    collection_name: Optional[str] = 'LangChainCollection'
+    #collection_name: Optional[str] = 'LangChainCollection'
     drop_existing_embeddings: Optional[bool] = False
 
     @validator('urls')
@@ -58,9 +57,9 @@ class QueryModel(BaseModel):
 
     text: str
     session_id: str = str(uuid.uuid4())
-    client_id: str = str(uuid.uuid4())
+    client_id: EmailStr = EmailStr()
     llm_name: Optional[Literal['openai', 'llamacpp', 'gpt4all']] = 'openai'
-    collection_name: Optional[str] = 'LangChainCollection'
+    #collection_name: Optional[str] = 'LangChainCollection'
 
     @validator('text')
     def validate_text(cls, text):
