@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 # from sqlmodel import Session, delete
-from database import SessionLocal, QueryDB
+from .database import SessionLocal, QueryDB
 
 
 class ChatSession:

@@ -2,9 +2,10 @@ from pydantic import BaseModel, validator, EmailStr
 from typing import Optional, Literal, List
 import os
 import re
-from fastapi import HTTPException
-from utils import get_settings
 import uuid
+from fastapi import HTTPException
+
+from .utils import get_settings
 def validate_uuid(uuid_string):
     """
     Regex pattern to validate uuid

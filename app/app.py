@@ -2,12 +2,12 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import shortuuid
 
-from schema import DocModel, QueryModel, DeleteSession
-from database import create_db_and_tables
-from vector_database import vector_database, db_conversation_chain
-from data import TextProcessor
-from chat_session import ChatSession
-from utils import count_tokens
+from .schema import DocModel, QueryModel, DeleteSession
+from .database import create_db_and_tables
+from .vector_database import vector_database, db_conversation_chain
+from .data import TextProcessor
+from .chat_session import ChatSession
+from .utils import count_tokens
 
 
 app = FastAPI()
