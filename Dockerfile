@@ -11,8 +11,10 @@ RUN pip install -r /myapp/requirements.txt
 # Copy the FastAPI application code to the container
 COPY ./app /myapp/app
 COPY ./authapp /myapp/authapp
+COPY ./frontend /myapp/frontend
+
 COPY ./entrypoint.sh ./
 # Expose the required ports
 # EXPOSE 8000
-EXPOSE 8080
+# EXPOSE 8080
 ENTRYPOINT ["sh","/myapp/entrypoint.sh"]

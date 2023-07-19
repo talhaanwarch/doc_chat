@@ -1,0 +1,27 @@
+/* Add custom styling here */
+
+.header {
+    background-color: #d63333;
+    padding: 20px;
+    text-align: center;
+}
+
+.header-title {
+    margin: 0;
+    font-size: 24px;
+}
+
+.header-welcome {
+    margin: 0;
+    font-size: 18px;
+}
+
+.content {
+    padding: 20px;
+}
+
+.footer {
+    background-color: #f2f2f2;
+    padding: 20px;
+    text-align: center;
+}

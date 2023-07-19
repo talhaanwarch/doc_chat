@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     postgres_host: str
     postgres_password: str
     postgres_port: int
+    email_host: str
+    email_port: int
+    email_host_user: str
+    email_host_password: str
 
     class Config:
         env_file = ".env"
