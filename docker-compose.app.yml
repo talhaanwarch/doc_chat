@@ -24,23 +24,9 @@ services:
       - milvus
     # command: -p 5433 # iam unable to run authend on 5433
 
-  # nginx:
-  #   build: ./nginx
-  #   volumes:
-  #     - static_vol:/frontend/static
-  #     - template_vol:/frontend/templates
-  #   ports:
-  #     - "80:80"
-  #   depends_on:
-  #     - app
-  #   networks:
-  #     - milvus
-
 
 volumes:
   sqldb:
-  # static_vol:
-  # template_vol:
 
 networks:
   milvus:
