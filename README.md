@@ -1,5 +1,13 @@
 # Production level scalable Documents ChatBot with a customizable dashboard
 
+```diff
+- This repo is under active devolopment so might be documentation is outdated.
+- For deployment version look into deploy branch. The deploy branch is deployed in following link
+- https://gptdemo.talhaanwar.com/login
+
+```
+
+
 ## About
 ChatBot to do conversation based on stored data provided by the user. Here is a flow diagram
 ![image](https://github.com/talhaanwarch/doc_chat_api/assets/37379131/ebd2f33e-2383-4120-87ae-1f136e8334ef)
