@@ -26,7 +26,7 @@ class DocModel(BaseModel):
     """
     urls: List[str]
     client_id: EmailStr = EmailStr()
-    embeddings_name: Optional[Literal['openai', 'sentence']] = 'openai'
+    embeddings_name: Optional[Literal['openai', 'sentence']] = 'sentence'
     #collection_name: Optional[str] = 'LangChainCollection'
     drop_existing_embeddings: Optional[bool] = False
 
@@ -59,7 +59,7 @@ class QueryModel(BaseModel):
     text: str
     session_id: str = str(uuid.uuid4())
     client_id: EmailStr = EmailStr()
-    llm_name: Optional[Literal['openai', 'llamacpp', 'gpt4all']] = 'openai'
+    llm_name: Optional[Literal['openai', 'llamacpp', 'gpt4all','falconlight',"gpt4all_light"]] = 'gpt4all_light'
     #collection_name: Optional[str] = 'LangChainCollection'
 
     @validator('text')
@@ -90,13 +90,14 @@ class QueryModel(BaseModel):
             if len(key) != 51 or not key.startswith('sk'):
                 raise ValueError('The API is not valid or not provided')
 
-        if llm_name == 'gpt4all':
-            if not os.path.isfile('llms/ggml-gpt4all-j.bin'):
-                raise HTTPException(status_code=404, detail="Model weights are not found")
+        # we will download if not found
+        # if llm_name == 'gpt4all':
+        #     if not os.path.isfile('llms/ggml-gpt4all-j.bin'):
+        #         raise HTTPException(status_code=404, detail="Model weights are not found")
 
-        if llm_name == 'llamacpp':
-            if not os.path.isfile('llms/ggml-gpt4all-l13b-snoozy.bin'):
-                raise HTTPException(status_code=404, detail="Model weights are not found")    
+        # if llm_name == 'llamacpp':
+        #     if not os.path.isfile('llms/ggml-gpt4all-l13b-snoozy.bin'):
+        #         raise HTTPException(status_code=404, detail="Model weights are not found")    
   
         return llm_name
 

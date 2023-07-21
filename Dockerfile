@@ -1,5 +1,11 @@
-FROM python:3.10-slim-buster
+FROM ubuntu:jammy
 # Set the working directory inside the container
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip
+
+
+
 WORKDIR /myapp
 
 # Copy the requirements.txt file to the container
@@ -12,6 +18,7 @@ RUN pip install -r /myapp/requirements.txt
 COPY ./app /myapp/app
 COPY ./authapp /myapp/authapp
 COPY ./frontend /myapp/frontend
+COPY ./llms /myapp/llms
 
 COPY ./entrypoint.sh ./
 # Expose the required ports

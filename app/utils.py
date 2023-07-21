@@ -17,6 +17,16 @@ def count_tokens(chain, query):
     return result, cb
 
 
+class AttributeDict(dict):
+    """
+    Allow to access dictionary key via dot
+    # https://bobbyhadz.com/blog/python-use-dot-to-access-dictionary
+    """
+    __getattr__ = dict.__getitem__
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
+
+
 class Settings(BaseSettings):
     """
     Settings class for this application.

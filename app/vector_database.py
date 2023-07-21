@@ -7,58 +7,16 @@ from langchain.chains import ConversationalRetrievalChain
 from fastapi import HTTPException
 import pymilvus
 from langchain.schema import messages_from_dict
+import structlog
+from joblib import Memory
 
 from .utils import get_settings
 from .prompts import prompt_doc, prompt_chat
+from .aimodeldownload import *
+cache_dir = "./model_cache"
+memory = Memory(cache_dir, verbose=0)
 
-def vector_database(
-              collection_name,
-              drop_existing_embeddings=False,
-              embeddings_name='sentence',
-              doc_text=None):
-
-    """
-    Creates and returns a Milvus database based on the specified parameters.
-    Args:
-        doct_text: The document text. 
-        collection_name: The name of the collection.
-        drop_existing_embeddings: Whether to drop existing embeddings.
-        embeddings_name: The name of the embeddings ('openai' or 'sentence').
-    Returns:
-        The Milvus database.
-        """
-
-    if embeddings_name == 'openai':
-        embeddings = OpenAIEmbeddings(openai_api_key=get_settings().openai_api_key)
-    elif embeddings_name == 'sentence':
-        try:
-            from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-            embeddings = HuggingFaceEmbeddings()
-        except:
-            raise("Install sentence-transformers and gpt4all")
-    else:
-        print('invalid embeddings')
-    if doc_text:
-        try: 
-            vector_db = Milvus.from_documents(
-                doc_text,
-                embeddings,
-                collection_name=collection_name,
-                drop_old=drop_existing_embeddings,
-                connection_args={"host": get_settings().milvus_host, "port": "19530"},
-                # if we want to communicate between two dockers then instead of local 
-                # host we need to use milvus-standalone
-            )
-        except pymilvus.exceptions.ParamError:
-            raise HTTPException(status_code=400,
-                                detail=f"collection_name {collection_name} already exist. Either set drop_existing_embeddings to true or change collection_name")
-    else:
-        vector_db = Milvus(
-            embeddings,
-            collection_name=collection_name,
-            connection_args={"host": get_settings().milvus_host, "port": "19530"},
-        )
-    return vector_db
+logger = structlog.getLogger()
 
 
 def get_chat_history(inputs):
@@ -68,6 +26,89 @@ def get_chat_history(inputs):
     inputs = [i.content for i in inputs]
     # inputs = [string for index, string in enumerate(inputs) if index % 2 == 0]
     return '\n'.join(inputs)
+
+
+
+def vector_database(collection_name, drop_existing_embeddings=False, embeddings_name='sentence', doc_text=None):
+    """
+    Creates and returns a Milvus database based on the specified parameters.
+    Args:
+        collection_name: The name of the collection.
+        drop_existing_embeddings: Whether to drop existing embeddings.
+        embeddings_name: The name of the embeddings ('openai' or 'sentence').
+        doc_text: The document text.
+    Returns:
+        The Milvus database.
+    """
+    if embeddings_name == 'openai':
+        embeddings = OpenAIEmbeddings(openai_api_key=get_settings().openai_api_key)
+    elif embeddings_name == 'sentence':
+        try:
+            embeddings = get_embeddings()
+        except:
+            raise HTTPException(status_code=500, detail="Install sentence-transformers and gpt4all")
+    else:
+        logger.info('invalid embeddings')
+        return None
+
+    if doc_text:
+        try:
+            vector_db = Milvus.from_documents(
+                doc_text,
+                embeddings,
+                collection_name=collection_name,
+                drop_old=drop_existing_embeddings,
+                connection_args={"host": get_settings().milvus_host, "port": "19530"},
+                # if we want to communicate between two dockers then instead of localhost
+                # we need to use milvus-standalone
+            )
+            logger.info("Successfully added")
+        except pymilvus.exceptions.ParamError:
+            raise HTTPException(status_code=400,
+                                detail=f"collection_name {collection_name} already exists. Either set drop_existing_embeddings to true or change collection_name")
+    else:
+        vector_db = Milvus(
+            embeddings,
+            collection_name=collection_name,
+            connection_args={"host": get_settings().milvus_host, "port": "19530"},
+        )
+    return vector_db
+
+
+def llm_model(llm_name):
+    """
+    Get LLM model based on the given name.
+    """
+    llm_models = {
+        "gpt4all": {
+            "url": "http://gpt4all.io/models/ggml-gpt4all-j.bin",
+            "filepath": "./llms/ggml-gpt4all-j.bin"
+        },
+
+        "gpt4all_light": {
+            "url": "https://huggingface.co/TheBloke/orca_mini_3B-GGML/resolve/main/orca-mini-3b.ggmlv3.q4_0.bin",
+            "filepath": "./llms/orca-mini-3b.ggmlv3.q4_0.bin"
+        },
+
+
+        "falconlight": {
+            "url": "https://huggingface.co/nomic-ai/gpt4all-falcon-ggml/resolve/main/ggml-model-gpt4all-falcon-q4_0.bin",
+            "filepath": "./llms/ggml-model-gpt4all-falcon-q4_0.bin"
+        },
+        "llamacpp": {
+            "url": "http://gpt4all.io/models/ggml-gpt4all-l13b-snoozy.bin",
+            "filepath": "./llms/ggml-gpt4all-l13b-snoozy.bin"
+        }
+    }
+
+    model_info = llm_models.get(llm_name)
+    if not model_info:
+        logger.error(f"Unknown LLM model: {llm_name}")
+        return None, None
+
+    return download_and_load_llm_model(llm_name, model_info)
+
+
 
 
 def db_conversation_chain(llm_name, stored_memory, collection_name):
@@ -87,28 +128,10 @@ def db_conversation_chain(llm_name, stored_memory, collection_name):
             model_name='gpt-3.5-turbo',
             openai_api_key=get_settings().openai_api_key)  
         embeddings_name = 'openai'
+    else:
+        llm, embeddings_name = llm_model(llm_name)
 
-    elif llm_name == 'gpt4all':
-        try:
-            from langchain.llms import GPT4All
-            llm = GPT4All(
-                model='llms/ggml-gpt4all-j.bin', 
-                n_ctx=1000, 
-                verbose=True)
-            embeddings_name = "sentence"
-        except:
-            print("Install sentence-transformers and gpt4all")
 
-    elif llm_name == 'llamacpp':
-        try:
-            from langchain.llms import GPT4All
-            llm = GPT4All(
-                model='llms/ggml-gpt4all-l13b-snoozy.bin', 
-                n_ctx=1000, 
-                verbose=True)
-            embeddings_name = "sentence"
-        except:
-            print("Install sentence-transformers and gpt4all")
 
     vector_db = vector_database(
         collection_name=collection_name,
@@ -127,7 +150,7 @@ def db_conversation_chain(llm_name, stored_memory, collection_name):
                                       )
     chain = ConversationalRetrievalChain.from_llm(
         llm,
-        retriever=vector_db.as_retriever(),
+        retriever=vector_db.as_retriever(search_kwargs={"k": 3}),
         memory=memory,
         chain_type="stuff",
         return_source_documents=True,
