@@ -5,7 +5,7 @@ services:
     ports:
       - "8070:8070" # frotnend
       - "8080:8080" #authend
-      - 8090:8090 # backend
+      - "8090:8090" # backend
     env_file:
       - .env
     networks:
@@ -22,24 +22,11 @@ services:
       - "5433:5432"
     networks:
       - milvus
-
-  # nginx:
-  #   build: ./nginx
-  #   volumes:
-  #     - static_vol:/frontend/static
-  #     - template_vol:/frontend/templates
-  #   ports:
-  #     - "80:80"
-  #   depends_on:
-  #     - app
-  #   networks:
-  #     - milvus
+    # command: -p 5433 # iam unable to run authend on 5433
 
 
 volumes:
   sqldb:
-  static_vol:
-  template_vol:
 
 networks:
   milvus:

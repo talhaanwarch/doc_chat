@@ -1,11 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks
 from fastapi.responses import JSONResponse
 import shortuuid
 
 from .schema import DocModel, QueryModel, DeleteSession
 from .database import create_db_and_tables
 from .vector_database import vector_database, db_conversation_chain
-from .data import TextProcessor
+from .data import S3FileLoader
 from .chat_session import ChatSession
 from .utils import count_tokens
 
@@ -22,18 +22,35 @@ def on_startup():
     create_db_and_tables()
 
 
+# @app.post("/doc_ingestion")
+# def add_documents(doc: DocModel):
+#     """
+#     Endpoint to add documents for ingestion.
+#     """
+#     docs = S3FileLoader().load_and_split(doc.urls)
+#     _ = vector_database(
+#         doc_text=docs,
+#         collection_name=shortuuid.uuid(doc.client_id),
+#         embeddings_name=doc.embeddings_name
+#     )
+#     return JSONResponse(content={"message": "Documents added successfully"})
+
+
 @app.post("/doc_ingestion")
-def add_documents(doc: DocModel):
+def add_documents(doc: DocModel, background_tasks: BackgroundTasks):
     """
     Endpoint to add documents for ingestion.
     """
-    docs = TextProcessor(doc.urls).load_n_split()
+    background_tasks.add_task(process_documents, doc)
+    return JSONResponse(content={"message": "Documents ingestion process started"})
+
+def process_documents(doc: DocModel):
+    docs = S3FileLoader().load_and_split(doc.urls)
     _ = vector_database(
         doc_text=docs,
         collection_name=shortuuid.uuid(doc.client_id),
         embeddings_name=doc.embeddings_name
     )
-    return JSONResponse(content={"message": "Documents added successfully"})
 
 
 @app.post("/query")

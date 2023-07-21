@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     postgres_host: str
     postgres_password: str
     postgres_port: int
+    aws_access_key_id: str
+    aws_secret_access_key: str
+    region_name: str
 
     class Config:
         env_file = ".env"
