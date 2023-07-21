@@ -3,8 +3,9 @@ services:
   app:
     build: .
     ports:
-      # - "8000:8000"
-      - "8080:8080"
+      - "8070:8070" # frotnend
+      - "8080:8080" #authend
+      - 8090:8090 # backend
     env_file:
       - .env
     networks:
@@ -22,8 +23,23 @@ services:
     networks:
       - milvus
 
+  # nginx:
+  #   build: ./nginx
+  #   volumes:
+  #     - static_vol:/frontend/static
+  #     - template_vol:/frontend/templates
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - app
+  #   networks:
+  #     - milvus
+
+
 volumes:
   sqldb:
+  static_vol:
+  template_vol:
 
 networks:
   milvus:

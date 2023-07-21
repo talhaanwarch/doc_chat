@@ -34,7 +34,7 @@ app.include_router(
 import requests
 
 def send_query(text, client_id):
-    url = 'http://app:8000/query'
+    url = 'http://app:8090/query'
     headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json'
@@ -55,7 +55,7 @@ def send_query(text, client_id):
 
 
 def ingest_data(urls, client_id):
-    url = 'http://app:8000/doc_ingestion'
+    url = 'http://app:8090/doc_ingestion'
     headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json'

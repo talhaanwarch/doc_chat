@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Protected Page</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-dark text-light">
+        <div class="container py-3 header-flex">
+            <h1>AI Company</h1>
+            <nav>
+                <a class="btn btn-primary ml-2" href="/logout">Logout</a>
+                <!-- <a class="btn btn-secondary ml-2" href="/register">Register</a> -->
+            </nav>
+        </div>
+    </header>
+
+    <div class="container py-5">
+        <h1>Protected Page</h1>
+        <p>Welcome, {{ user_email }}!</p>
+
+        <form method="POST" action="/protected">
+            <input type="text" name="input" placeholder="Enter your input" required>
+            <input type="submit" class="btn btn-primary" value="Submit">
+        </form>
+
+        {% if user_input %}
+        <p>Your input: {{ user_input }}</p>
+        {% endif %}
+
+        {% if output %}
+        <p>Reponse: {{ output }}</p>
+        {% endif %}
+
+    </div>
+
+    <footer class="bg-light text-center py-3">
+        <div class="container">
+            <p>&copy; 2023 AI Company. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
