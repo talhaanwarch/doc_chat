@@ -2,14 +2,14 @@ from langchain.vectorstores import Milvus
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.memory.chat_message_histories.in_memory import ChatMessageHistory
 from langchain.chat_models import ChatOpenAI
-from utils import get_settings
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from fastapi import HTTPException
 import pymilvus
 from langchain.schema import messages_from_dict
-from utils import get_settings
-from prompts import prompt_doc, prompt_chat
+
+from .utils import get_settings
+from .prompts import prompt_doc, prompt_chat
 
 def vector_database(
               collection_name,
