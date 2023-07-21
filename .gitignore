@@ -14,3 +14,4 @@ __pycache__/
 notebooks
 *.ipynb_checkpoints/
 notes.txt
+llms/all-MiniLM-L6-v2
