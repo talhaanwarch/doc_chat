@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session
+from flask import Blueprint, render_template, request, session, redirect
 import requests
 import structlog
 
@@ -31,7 +31,9 @@ def query():
                 logger.info("query")
                 logger.info(query_result)
                 return render_template("query.html", user_email=user_email, user_input=user_input,
-                                       output=query_result.get('answer', ''), error=query_result.get('error', ''))
+                                       answer=query_result.get('answer', ''), 
+                                       source=query_result.get('source', ''), 
+                                       error=query_result.get('error', ''))
 
             # Render the query.html template without user input initially
             return render_template("query.html", user_email=user_email)

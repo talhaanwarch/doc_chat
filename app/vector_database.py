@@ -32,12 +32,11 @@ def vector_database(collection_name, drop_existing_embeddings=False, embeddings=
     Args:
         collection_name: The name of the collection.
         drop_existing_embeddings: Whether to drop existing embeddings.
-        embeddings_name: The name of the embeddings ('openai' or 'sentence').
+        embedding
         doc_text: The document text.
     Returns:
         The Milvus database.
     """
-    
 
     if doc_text:
         try:
@@ -63,10 +62,6 @@ def vector_database(collection_name, drop_existing_embeddings=False, embeddings=
     return vector_db
 
 
-
-
-
-
 def db_conversation_chain(llm_model, embeddings, stored_memory, collection_name):
 
     """
@@ -78,11 +73,6 @@ def db_conversation_chain(llm_model, embeddings, stored_memory, collection_name)
     Returns:
         The ConversationalRetrievalChain.
     """
-
-   
-
-
-
     vector_db = vector_database(
         collection_name=collection_name,
         embeddings=embeddings

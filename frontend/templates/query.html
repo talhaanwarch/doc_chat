@@ -35,8 +35,14 @@
         <p>Your input: {{ user_input }}</p>
         {% endif %}
 
-        {% if output %}
-        <p>Reponse: {{ output }}</p>
+        {% if answer %}
+        <p>Answer: {{ answer }}</p>
+        {% endif %}
+
+        {% if source %}
+        {% for src in source %}
+        <p>Source: {{ src }}</p>
+        {% endfor %}
         {% endif %}
 
     </div>

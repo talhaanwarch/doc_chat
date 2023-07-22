@@ -31,11 +31,11 @@ def on_startup():
 
 
 @app.post("/doc_ingestion")
-def add_documents(doc: DocModel, background_tasks: BackgroundTasks):
+def add_documents(doc: DocModel, background_tasks: BackgroundTasks,  request: Request):
     """
     Endpoint to add documents for ingestion.
     """
-    background_tasks.add_task(process_documents, doc)
+    background_tasks.add_task(process_documents, doc, request)
     return JSONResponse(content={"message": "Documents ingestion process started"})
 
 def process_documents(doc: DocModel, request: Request):
