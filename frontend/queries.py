@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, session
 import requests
+import structlog
 
+logger = structlog.getLogger()
 query_bp = Blueprint("query", __name__)
 API_BASE_URL = "http://app:8080" 
 
@@ -26,7 +28,8 @@ def query():
                 else:
                     # Handle the query error appropriately
                     query_result = {"error": "An error occurred during the query."}
-
+                logger.info("query")
+                logger.info(query_result)
                 return render_template("query.html", user_email=user_email, user_input=user_input,
                                        output=query_result.get('answer', ''), error=query_result.get('error', ''))
 

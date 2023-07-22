@@ -1,14 +1,10 @@
 import os
 import requests
 
-from joblib import Memory
 import structlog
-
-cache_dir = "./model_cache"
-memory = Memory(cache_dir, verbose=0)
 logger = structlog.getLogger()
 
-@memory.cache
+
 def download_model(llm_name, model_info):
     """
     Download the specified LLM model.
@@ -34,7 +30,6 @@ def download_model(llm_name, model_info):
 
     return model_filepath
 
-@memory.cache
 def download_and_load_llm_model(llm_name, model_info):
     """
     Download and load the specified LLM model.
@@ -48,7 +43,7 @@ def download_and_load_llm_model(llm_name, model_info):
 
     try:
         from langchain.llms import GPT4All
-        llm = GPT4All(model=model_filepath,  verbose=True)
+        llm = GPT4All(model=model_filepath, verbose=True, n_threads=2)
         embeddings_name = "sentence"
     except Exception as e:
         logger.error(f"Error loading {llm_name} LLM: {e}")
@@ -61,7 +56,6 @@ def download_and_load_llm_model(llm_name, model_info):
 
 
 
-@memory.cache
 def get_embeddings(embedding_name="all-MiniLM-L6-v2"):
     """
     Get embeddings based on the specified name.
@@ -81,3 +75,5 @@ def get_embeddings(embedding_name="all-MiniLM-L6-v2"):
             logger.info(f'{embedding_name} downloading ... ')
             embeddings = HuggingFaceEmbeddings(embedding_name)
         return embeddings
+
+

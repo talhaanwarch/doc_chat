@@ -50,7 +50,7 @@ class S3FileLoader(BaseLoader):
 
     def load_and_split(self, s3_uris: List[str]) -> List[str]:
         documents = self.load(s3_uris)
-        text_splitter = TokenTextSplitter(chunk_size=500, chunk_overlap=20) 
+        text_splitter = TokenTextSplitter(chunk_size=200, chunk_overlap=20) 
         # TODO different model has different content length
         document_texts = text_splitter.split_documents(documents)
         return document_texts

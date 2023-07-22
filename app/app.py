@@ -2,6 +2,7 @@ from fastapi import FastAPI, BackgroundTasks
 from fastapi.responses import JSONResponse
 import shortuuid
 import structlog
+from time import time
 
 from .schema import DocModel, QueryModel, DeleteSession
 from .database import create_db_and_tables
@@ -61,7 +62,11 @@ def query_response(query: QueryModel):
         result, cost = count_tokens(chain, query.text)
         
     else:
+        start = time()
         result = chain(query.text)
+        end = time()
+        total = round((end - start),3)
+        logger.info(f'time for one query {total}')
         cost = AttributeDict({ #TODO atleasr get total number of tokens
             "total_tokens": 0, 
             "prompt_tokens": 0,

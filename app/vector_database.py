@@ -8,13 +8,11 @@ from fastapi import HTTPException
 import pymilvus
 from langchain.schema import messages_from_dict
 import structlog
-from joblib import Memory
 
 from .utils import get_settings
 from .prompts import prompt_doc, prompt_chat
 from .aimodeldownload import *
-cache_dir = "./model_cache"
-memory = Memory(cache_dir, verbose=0)
+
 
 logger = structlog.getLogger()
 

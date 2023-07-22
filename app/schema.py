@@ -59,7 +59,7 @@ class QueryModel(BaseModel):
     text: str
     session_id: str = str(uuid.uuid4())
     client_id: EmailStr = EmailStr()
-    llm_name: Optional[Literal['openai', 'llamacpp', 'gpt4all','falconlight',"gpt4all_light"]] = 'gpt4all_light'
+    llm_name: Optional[Literal['openai', 'llamacpp', 'gpt4all','falconlight',"gpt4all_light"]] = 'falconlight'
     #collection_name: Optional[str] = 'LangChainCollection'
 
     @validator('text')
