@@ -26,3 +26,4 @@ flask
 boto3
 pypdf
 structlog
+fastapi-cache2

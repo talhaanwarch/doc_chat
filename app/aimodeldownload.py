@@ -50,10 +50,7 @@ def download_and_load_llm_model(llm_name, model_info):
         llm = None
         embeddings_name = None
 
-    return llm, embeddings_name
-
-
-
+    return llm
 
 
 def get_embeddings(embedding_name="all-MiniLM-L6-v2"):
@@ -77,3 +74,35 @@ def get_embeddings(embedding_name="all-MiniLM-L6-v2"):
         return embeddings
 
 
+def llm_model(llm_name):
+    """
+    Get LLM model based on the given name.
+    """
+    llm_models = {
+        "gpt4all": {
+            "url": "http://gpt4all.io/models/ggml-gpt4all-j.bin",
+            "filepath": "./llms/ggml-gpt4all-j.bin"
+        },
+
+        "gpt4all_light": {
+            "url": "https://huggingface.co/TheBloke/orca_mini_3B-GGML/resolve/main/orca-mini-3b.ggmlv3.q4_0.bin",
+            "filepath": "./llms/orca-mini-3b.ggmlv3.q4_0.bin"
+        },
+
+
+        "falconlight": {
+            "url": "https://huggingface.co/nomic-ai/gpt4all-falcon-ggml/resolve/main/ggml-model-gpt4all-falcon-q4_0.bin",
+            "filepath": "./llms/ggml-model-gpt4all-falcon-q4_0.bin"
+        },
+        "llamacpp": {
+            "url": "http://gpt4all.io/models/ggml-gpt4all-l13b-snoozy.bin",
+            "filepath": "./llms/ggml-gpt4all-l13b-snoozy.bin"
+        }
+    }
+
+    model_info = llm_models.get(llm_name)
+    if not model_info:
+        logger.error(f"Unknown LLM model: {llm_name}")
+        return None, None
+
+    return download_and_load_llm_model(llm_name, model_info)

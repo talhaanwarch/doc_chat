@@ -1,4 +1,4 @@
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import FastAPI, BackgroundTasks, Request
 from fastapi.responses import JSONResponse
 import shortuuid
 import structlog
@@ -10,6 +10,7 @@ from .vector_database import vector_database, db_conversation_chain
 from .data import S3FileLoader
 from .chat_session import ChatSession
 from .utils import count_tokens, AttributeDict
+from .aimodeldownload import *
 
 logger = structlog.getLogger()
 
@@ -23,6 +24,11 @@ def on_startup():
     Event handler called when the application starts up.
     """
     create_db_and_tables()
+    app.state.llm = llm_model("gpt4all_light")
+    app.state.embedding = get_embeddings()
+
+
+
 
 @app.post("/doc_ingestion")
 def add_documents(doc: DocModel, background_tasks: BackgroundTasks):
@@ -32,17 +38,17 @@ def add_documents(doc: DocModel, background_tasks: BackgroundTasks):
     background_tasks.add_task(process_documents, doc)
     return JSONResponse(content={"message": "Documents ingestion process started"})
 
-def process_documents(doc: DocModel):
+def process_documents(doc: DocModel, request: Request):
     docs = S3FileLoader().load_and_split(doc.urls)
     _ = vector_database(
         doc_text=docs,
         collection_name=shortuuid.uuid(doc.client_id),
-        embeddings_name=doc.embeddings_name
+        embeddings=request.app.state.embedding
     )
 
 
 @app.post("/query")
-def query_response(query: QueryModel):
+def query_response(query: QueryModel, request: Request):
     """
     Endpoint to process user queries.
     """
@@ -54,7 +60,8 @@ def query_response(query: QueryModel):
     # Get conversation chain
     chain = db_conversation_chain(
         stored_memory=stored_memory,
-        llm_name=query.llm_name,
+        llm_model=request.app.state.llm,
+        embeddings = request.app.state.embedding,
         collection_name=shortuuid.uuid(query.client_id)
     )
 

@@ -11,7 +11,6 @@ import structlog
 
 from .utils import get_settings
 from .prompts import prompt_doc, prompt_chat
-from .aimodeldownload import *
 
 
 logger = structlog.getLogger()
@@ -27,7 +26,7 @@ def get_chat_history(inputs):
 
 
 
-def vector_database(collection_name, drop_existing_embeddings=False, embeddings_name='sentence', doc_text=None):
+def vector_database(collection_name, drop_existing_embeddings=False, embeddings=None, doc_text=None):
     """
     Creates and returns a Milvus database based on the specified parameters.
     Args:
@@ -38,16 +37,7 @@ def vector_database(collection_name, drop_existing_embeddings=False, embeddings_
     Returns:
         The Milvus database.
     """
-    if embeddings_name == 'openai':
-        embeddings = OpenAIEmbeddings(openai_api_key=get_settings().openai_api_key)
-    elif embeddings_name == 'sentence':
-        try:
-            embeddings = get_embeddings()
-        except:
-            raise HTTPException(status_code=500, detail="Install sentence-transformers and gpt4all")
-    else:
-        logger.info('invalid embeddings')
-        return None
+    
 
     if doc_text:
         try:
@@ -73,43 +63,11 @@ def vector_database(collection_name, drop_existing_embeddings=False, embeddings_
     return vector_db
 
 
-def llm_model(llm_name):
-    """
-    Get LLM model based on the given name.
-    """
-    llm_models = {
-        "gpt4all": {
-            "url": "http://gpt4all.io/models/ggml-gpt4all-j.bin",
-            "filepath": "./llms/ggml-gpt4all-j.bin"
-        },
-
-        "gpt4all_light": {
-            "url": "https://huggingface.co/TheBloke/orca_mini_3B-GGML/resolve/main/orca-mini-3b.ggmlv3.q4_0.bin",
-            "filepath": "./llms/orca-mini-3b.ggmlv3.q4_0.bin"
-        },
-
-
-        "falconlight": {
-            "url": "https://huggingface.co/nomic-ai/gpt4all-falcon-ggml/resolve/main/ggml-model-gpt4all-falcon-q4_0.bin",
-            "filepath": "./llms/ggml-model-gpt4all-falcon-q4_0.bin"
-        },
-        "llamacpp": {
-            "url": "http://gpt4all.io/models/ggml-gpt4all-l13b-snoozy.bin",
-            "filepath": "./llms/ggml-gpt4all-l13b-snoozy.bin"
-        }
-    }
-
-    model_info = llm_models.get(llm_name)
-    if not model_info:
-        logger.error(f"Unknown LLM model: {llm_name}")
-        return None, None
-
-    return download_and_load_llm_model(llm_name, model_info)
 
 
 
 
-def db_conversation_chain(llm_name, stored_memory, collection_name):
+def db_conversation_chain(llm_model, embeddings, stored_memory, collection_name):
 
     """
     Creates and returns a ConversationalRetrievalChain based on the specified parameters.
@@ -121,19 +79,13 @@ def db_conversation_chain(llm_name, stored_memory, collection_name):
         The ConversationalRetrievalChain.
     """
 
-    if llm_name == 'openai':
-        llm = ChatOpenAI(
-            model_name='gpt-3.5-turbo',
-            openai_api_key=get_settings().openai_api_key)  
-        embeddings_name = 'openai'
-    else:
-        llm, embeddings_name = llm_model(llm_name)
+   
 
 
 
     vector_db = vector_database(
         collection_name=collection_name,
-        embeddings_name=embeddings_name
+        embeddings=embeddings
         )
 
     if stored_memory:
@@ -147,7 +99,7 @@ def db_conversation_chain(llm_name, stored_memory, collection_name):
                                       chat_memory=chat_history
                                       )
     chain = ConversationalRetrievalChain.from_llm(
-        llm,
+        llm_model,
         retriever=vector_db.as_retriever(search_kwargs={"k": 3}),
         memory=memory,
         chain_type="stuff",
