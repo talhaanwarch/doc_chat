@@ -4,7 +4,7 @@ import shortuuid
 import structlog
 from time import time
 
-from .schema import DocModel, QueryModel, DeleteSession
+from .schema import DocModel, QueryModel
 from .database import create_db_and_tables
 from .vector_database import vector_database, db_conversation_chain
 from .data import S3FileLoader
@@ -38,7 +38,6 @@ def process_documents(doc: DocModel):
     _ = vector_database(
         doc_text=docs,
         collection_name=shortuuid.uuid(doc.client_id),
-        embeddings_name=doc.embeddings_name
     )
 
 
@@ -56,15 +55,11 @@ def query_response(query: QueryModel):
     # Get conversation chain
     chain = db_conversation_chain(
         stored_memory=stored_memory,
-        llm_name=query.llm_name,
         collection_name=shortuuid.uuid(query.client_id)
     )
 
-    if query.llm_name == 'openai':
-        result, cost = count_tokens(chain, query.text)
-    else:
-        result = chain(query.text)
-        cost = None
+    result, cost = count_tokens(chain, query.text)
+   
 
     sources = list(set([doc.metadata['source'].split('/')[-1] for doc in
                         result['source_documents']]))
@@ -79,12 +74,3 @@ def query_response(query: QueryModel):
         "cost": cost,
         'source': sources
     }
-
-
-@app.post("/delete")
-def delete_session(session: DeleteSession):
-    """
-    Endpoint to delete a session from the database.
-    """
-    response = chat_session.delete_sess_db(session.session_id)
-    return response
