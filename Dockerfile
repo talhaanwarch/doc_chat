@@ -1,11 +1,4 @@
-FROM ubuntu:jammy
-# Set the working directory inside the container
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip
-
-
-# FROM python:3.10-slim-buster
+FROM python:3.10-slim-buster
 
 
 # Set the working directory inside the container
@@ -15,13 +8,14 @@ WORKDIR /myapp
 COPY ./requirements.txt /myapp/requirements.txt
 
 # Install the Python dependencies
-RUN pip install -r /myapp/requirements.txt
+RUN pip install --upgrade pip --no-cache-dir
+RUN pip install -r /myapp/requirements.txt 
 #--no-cache-dir 
 # Copy the FastAPI application code to the container
 COPY ./app /myapp/app
 COPY ./authapp /myapp/authapp
 COPY ./frontend /myapp/frontend
-COPY ./llms /myapp/llms
+
 COPY ./entrypoint.sh ./
 # Expose the required ports
 # EXPOSE 8000
