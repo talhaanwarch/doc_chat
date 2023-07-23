@@ -10,23 +10,7 @@ services:
       - .env
     networks:
       - milvus
-    depends_on:
-      - postgres  # Add this line to specify the dependency
 
-  postgres:
-    image: postgres:latest
-    container_name: postgres
-    env_file:
-      - .env
-    volumes:
-      - sqldb:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - milvus
-
-volumes:
-  sqldb:
 
 networks:
   milvus:
