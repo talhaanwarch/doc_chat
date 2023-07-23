@@ -7,9 +7,6 @@ from sqlalchemy.orm import DeclarativeBase
 
 from .utils import get_settings
 
-# DATABASE_URL = 'postgresql+asyncpg://user:password@host:port/name'
-#"sqlite+aiosqlite:///./test.db"
-
 # Retrieve the PostgreSQL credentials from environment variables
 db_host = get_settings().postgres_host
 db_port = get_settings().postgres_port

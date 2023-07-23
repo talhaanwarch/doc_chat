@@ -10,6 +10,8 @@ services:
       - .env
     networks:
       - milvus
+    depends_on:
+      - postgres  # Add this line to specify the dependency
 
   postgres:
     image: postgres:latest
@@ -19,11 +21,9 @@ services:
     volumes:
       - sqldb:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
+      - "5432:5432"
     networks:
       - milvus
-    # command: -p 5433 # iam unable to run authend on 5433
-
 
 volumes:
   sqldb:

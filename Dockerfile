@@ -1,4 +1,13 @@
-FROM python:3.10-slim-buster
+FROM ubuntu:jammy
+# Set the working directory inside the container
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip
+
+
+# FROM python:3.10-slim-buster
+
+
 # Set the working directory inside the container
 WORKDIR /myapp
 
@@ -12,7 +21,7 @@ RUN pip install -r /myapp/requirements.txt
 COPY ./app /myapp/app
 COPY ./authapp /myapp/authapp
 COPY ./frontend /myapp/frontend
-
+COPY ./llms /myapp/llms
 COPY ./entrypoint.sh ./
 # Expose the required ports
 # EXPOSE 8000

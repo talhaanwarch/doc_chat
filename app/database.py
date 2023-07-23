@@ -24,6 +24,7 @@ engine = create_engine(postgresql_url)
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 
+
 class QueryDB(Base):
     __tablename__ = "querydb"
 
@@ -39,4 +40,6 @@ class QueryDB(Base):
     total_cost = Column(Float)
 
 def create_db_and_tables():
+    # Base.metadata.drop_all(bind=engine) # TODO getting fupicate error
     Base.metadata.create_all(bind=engine)
+
