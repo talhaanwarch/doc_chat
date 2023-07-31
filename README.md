@@ -94,7 +94,7 @@ We welcome contributions to enhance the features and usability of our Web Applic
 
 ## License
 
-The Web Application for PDF Chat is open-source and available under the [MIT License](https://opensource.org/licenses/MIT). You are free to use, modify, and distribute the code as per the terms of the license.
+The Web Application for PDF Chat is open-source and available under the CC-BY-NC. You are free to use, modify, and distribute the code as per the terms of the license.
 
 ---
 
