@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Registration</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <title>Registration | Doc Searcher </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .header-flex {
             display: flex;
@@ -14,30 +14,42 @@
 <body>
     <header class="bg-dark text-light">
         <div class="container py-3 header-flex">
-            <h1>AI Company</h1>
+            <h1>Doc Searcher </h1>
             <nav>
                 <a class="btn btn-primary ml-2" href="/login">Login</a>
-                <!-- <a class="btn btn-secondary ml-2" href="/register">Register</a> -->
             </nav>
         </div>
     </header>
 
-    <div class="container py-5">
-        <h1>Registration</h1>
-        {% if error_message %}
-        <p style="color: red;">{{ error_message }}</p>
-        {% endif %}
-        <form method="POST" action="/register">
-            <input type="email" name="email" placeholder="Email" required><br>
-            <input type="password" name="password" placeholder="Password" required><br>
-            <input type="submit" class="btn btn-primary" value="Register">
-        </form>
-    </div>
+    <main class="container py-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h1 class="mb-4">Registration</h1>
+                {% if error_message %}
+                    <p class="text-danger">{{ error_message }}</p>
+                {% endif %}
+                <form method="POST" action="/register">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </form>
+            </div>
+        </div>
+    </main>
 
     <footer class="bg-light text-center py-3">
         <div class="container">
-            <p>&copy; 2023 AI Company. All rights reserved.</p>
+            <p>&copy; 2023 Doc Searcher . All rights reserved.</p>
         </div>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
