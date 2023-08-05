@@ -2,8 +2,9 @@ from fastapi import FastAPI, BackgroundTasks
 from fastapi.responses import JSONResponse
 import shortuuid
 import structlog
+import pytz
 from time import time
-
+from datetime import datetime, timezone
 from .schema import DocModel, QueryModel
 from .database import create_db_and_tables
 from .vector_database import vector_database, db_conversation_chain
@@ -47,6 +48,9 @@ def query_response(query: QueryModel):
     Endpoint to process user queries.
     """
     # Check if there is a conversation history for the session
+    utc_time = datetime.utcnow()
+    pkt_timezone = pytz.timezone('Asia/Karachi')
+    date_time = utc_time.replace(tzinfo=pytz.utc).astimezone(pkt_timezone)
     start = time()
     stored_memory = chat_session.load_history(query.session_id)
     if len(stored_memory) == 0:
@@ -60,15 +64,21 @@ def query_response(query: QueryModel):
 
     result, cost = count_tokens(chain, query.text)
    
-
+    
     sources = list(set([doc.metadata['source'].split('/')[-1] for doc in
                         result['source_documents']]))
     answer = result['answer']
-    chat_session.save_sess_db(shortuuid.uuid(query.client_id), 
-                              query.session_id, query.text, answer, cost)
     end = time()
-    total = end - start 
-    logger.info(f" time taken {total}")
+    total_time = end - start 
+    chat_session.save_sess_db(query.client_id, 
+                              query.session_id, 
+                              query.text, answer, cost,
+                              date_time.strftime("%B %d, %Y"),
+                              date_time.strftime("%H:%M:%S"),
+                              round(total_time,2)
+                                )
+    
+    logger.info(f" time taken {total_time}")
     return {
         'answer': answer,
         "cost": cost,

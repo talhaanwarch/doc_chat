@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, create_engine, delete, Float
+from sqlalchemy import Column, Integer, String, create_engine, Date, Time, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import datetime
 from .utils import get_settings
 
 
@@ -31,9 +32,12 @@ class QueryDB(Base):
     id = Column(Integer, primary_key=True)
     session_id = Column(String)
     client_id = Column(String)
+    client_email = Column(String)
     query = Column(String)
     answer = Column(String)
-    
+    query_date = Column(Date)
+    query_time = Column(Time)
+    response_time = Column(Float)
     total_tokens = Column(Integer)
     prompt_tokens = Column(Integer)
     completion_tokens = Column(Integer)
