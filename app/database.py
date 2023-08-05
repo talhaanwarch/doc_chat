@@ -20,7 +20,7 @@ postgresql_url = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_
 
 # Replace the connection string with your PostgreSQL details
 # postgresql_url = "postgresql://postgres:talha1234@localhost:5432/sparkdb"
-engine = create_engine(postgresql_url)
+engine = create_engine(postgresql_url, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 

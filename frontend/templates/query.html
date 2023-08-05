@@ -1,20 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ask Query</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <title>Ask Query | Doc Searcher </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
         .header-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
         }
     </style>
 </head>
 <body>
     <header class="bg-dark text-light">
         <div class="container py-3 header-flex">
-            <h1>AI Company</h1>
+            <h1>Doc Searcher </h1>
             <nav>
                 <a class="btn btn-primary ml-2" href="/upload">Document</a>
                 <a class="btn btn-secondary ml-2" href="/logout">Logout</a>
@@ -22,32 +31,48 @@
         </div>
     </header>
 
-    <div class="container py-5">
-        <h1>Ask query</h1>
-        <p>Welcome, {{ user_email }}!</p>
+    <main class="container py-5">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">Ask a Query</h2>
+                <p class="card-text">Welcome, {{ user_email }}!</p>
 
-        <form method="POST" action="/query">
-            <input type="text" name="input" placeholder="Enter your input" required>
-            <input type="submit" class="btn btn-primary" value="Submit">
-        </form>
+                <form method="POST" action="/query" class="mb-4">
+                    <div class="form-group">
+                        <label for="queryInput">Enter your query:</label>
+                        <input type="text" id="queryInput" name="input" class="form-control" placeholder="Type your question here" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
 
-        {% if user_input %}
-        <p>Your input: {{ user_input }}</p>
-        {% endif %}
+                {% if user_input %}
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Your Query:</h5>
+                            <p class="card-text">{{ user_input }}</p>
+                        </div>
+                    </div>
+                {% endif %}
 
-        {% if output %}
-        <p>Reponse: {{ output }}</p>
-        {% endif %}
-
-    </div>
+                {% if output %}
+                    <div class="card mt-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Response:</h5>
+                            <p class="card-text">{{ output }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
 
     <footer class="bg-light text-center py-3">
         <div class="container">
-            <p>&copy; 2023 AI Company. All rights reserved.</p>
+            <p>&copy; 2023 Doc Searcher . All rights reserved.</p>
         </div>
     </footer>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
