@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 # from sqlmodel import Session, delete
 from .database import SessionLocal, QueryDB
-
+import shortuuid
 
 class ChatSession:
     """
@@ -25,11 +25,16 @@ class ChatSession:
         return result
 
     @staticmethod
-    def save_sess_db(client_id, session_id, query, answer, cost):
+    def save_sess_db(client_email,  session_id, query, answer, cost,
+                     query_date,query_time, response_time):
         
-        db = QueryDB(query=query, answer=answer, session_id=session_id, client_id=client_id, 
+        db = QueryDB(query=query, answer=answer, session_id=session_id, 
+                     client_email = client_email,
+                      client_id=shortuuid.uuid(client_email), 
                      total_tokens=cost.total_tokens, prompt_tokens=cost.prompt_tokens,
-                     completion_tokens=cost.completion_tokens, total_cost=cost.total_cost
+                     completion_tokens=cost.completion_tokens, total_cost=cost.total_cost,
+                     query_date=query_date,query_time=query_time, 
+                     response_time=response_time
                      )
         session = SessionLocal()
         session.add(db)

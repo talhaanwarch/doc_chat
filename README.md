@@ -23,7 +23,7 @@ The Web Application for PDF Chat is designed to provide an interactive and user-
 - Engage in interactive conversations with the uploaded data using OpenAI's GPT-3.5.
 - Retrieve answers to specific questions from the uploaded PDFs.
 - Secure user authentication and data separation to ensure privacy.
-- Dashboard powered by ToolJet for easy navigation and visualization.
+- Dashboard powered by AppSmith for easy navigation and visualization.
 
 ## Prerequisites
 
