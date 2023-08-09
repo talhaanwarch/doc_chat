@@ -1,6 +1,12 @@
 # Scalable Web Application for PDF Chat using ChatGPT
 
-Welcome to our Web Application for PDF Chat powered by OpenAI's ChatGPT! This application allows users to upload PDF documents, utilize ChatGPT for natural language processing, and engage in interactive conversations with their data. Each user's data is kept separate from others, ensuring privacy and security. This README will guide you through the deployment and usage of the application.
+Welcome to our Web Application for PDF Chat powered by OpenAI's ChatGPT! This application allows users to upload PDF documents, utilize ChatGPT for natural language processing, and engage in interactive conversations with their data. Each user's data is kept separate from others, ensuring privacy and security.  
+
+Website: https://gptdemo.talhaanwar.com/  
+Dasboard: https://dashboard.talhaanwar.com/  
+Server: https://server-monitor.talhaanwar.com/  
+
+This README will guide you through the deployment and usage of the application.  
 
 ## Table of Contents
 
