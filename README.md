@@ -33,7 +33,7 @@ The Web Application for PDF Chat is designed to provide an interactive and user-
 
 ## Prerequisites
 
-Before deploying the application, ensure that you have the following components installed:
+Before deploying the application, ensure that you have the following components:
 
 1. Docker
 2. Docker Compose
@@ -92,7 +92,8 @@ The Web Application for PDF Chat leverages the following technologies:
 - Docker: For containerizing the application and its components.
 - Docker Compose: For orchestrating the deployment of multiple containers.
 - Milvus: As the vector database for efficient data retrieval.
-- ToolJet: For creating the interactive dashboard.
+- Appsmith: For creating the interactive dashboard.
+- Netdata: For server monitoring 
 
 ## Contributing
 
