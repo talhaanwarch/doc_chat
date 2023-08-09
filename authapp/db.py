@@ -7,9 +7,6 @@ from sqlalchemy.orm import DeclarativeBase
 
 from .utils import get_settings
 
-# DATABASE_URL = 'postgresql+asyncpg://user:password@host:port/name'
-#"sqlite+aiosqlite:///./test.db"
-
 # Retrieve the PostgreSQL credentials from environment variables
 db_host = get_settings().postgres_host
 db_port = get_settings().postgres_port
@@ -28,7 +25,7 @@ class Base(DeclarativeBase):
 class User(SQLAlchemyBaseUserTableUUID, Base):
     pass
 
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE_URL, pool_pre_ping=True)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 

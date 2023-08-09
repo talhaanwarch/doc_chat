@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, render_template, request, redirect, session
 from . import auth, queries, uploads
 from .utils import Settings
 
@@ -14,7 +14,7 @@ app.register_blueprint(uploads.upload_bp)
 
 @app.route("/")
 def index():
-    return redirect("/login")
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run()

@@ -1,2 +1,3 @@
-*.volumes
-*.data
+*volumes
+*data
+*llms

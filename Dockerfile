@@ -1,4 +1,6 @@
 FROM python:3.10-slim-buster
+
+
 # Set the working directory inside the container
 WORKDIR /myapp
 
@@ -6,7 +8,8 @@ WORKDIR /myapp
 COPY ./requirements.txt /myapp/requirements.txt
 
 # Install the Python dependencies
-RUN pip install -r /myapp/requirements.txt
+RUN pip install --upgrade pip --no-cache-dir
+RUN pip install -r /myapp/requirements.txt 
 #--no-cache-dir 
 # Copy the FastAPI application code to the container
 COPY ./app /myapp/app

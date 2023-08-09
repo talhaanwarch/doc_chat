@@ -14,7 +14,6 @@ from .prompts import prompt_doc, prompt_chat
 def vector_database(
               collection_name,
               drop_existing_embeddings=False,
-              embeddings_name='sentence',
               doc_text=None):
 
     """
@@ -23,22 +22,12 @@ def vector_database(
         doct_text: The document text. 
         collection_name: The name of the collection.
         drop_existing_embeddings: Whether to drop existing embeddings.
-        embeddings_name: The name of the embeddings ('openai' or 'sentence').
     Returns:
         The Milvus database.
         """
 
-    if embeddings_name == 'openai':
-        embeddings = OpenAIEmbeddings(openai_api_key=get_settings().openai_api_key)
-    elif embeddings_name == 'sentence':
-        try:
-            from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-            embeddings = HuggingFaceEmbeddings()
-        except:
-            raise("Install sentence-transformers and gpt4all")
-    else:
-        print('invalid embeddings')
-    if doc_text:
+    embeddings = OpenAIEmbeddings(openai_api_key=get_settings().openai_api_key)
+    if doc_text: # adding new data
         try: 
             vector_db = Milvus.from_documents(
                 doc_text,
@@ -70,49 +59,23 @@ def get_chat_history(inputs):
     return '\n'.join(inputs)
 
 
-def db_conversation_chain(llm_name, stored_memory, collection_name):
+def db_conversation_chain(stored_memory, collection_name):
 
     """
     Creates and returns a ConversationalRetrievalChain based on the specified parameters.
     Args:
-        llm_name: The name of the language model ('openai', 'gpt4all', or 'llamacpp').
         stored_memory: Existing conversation.
         collection_name: The name of the collection (optional).
     Returns:
         The ConversationalRetrievalChain.
     """
 
-    if llm_name == 'openai':
-        llm = ChatOpenAI(
-            model_name='gpt-3.5-turbo',
-            openai_api_key=get_settings().openai_api_key)  
-        embeddings_name = 'openai'
-
-    elif llm_name == 'gpt4all':
-        try:
-            from langchain.llms import GPT4All
-            llm = GPT4All(
-                model='llms/ggml-gpt4all-j.bin', 
-                n_ctx=1000, 
-                verbose=True)
-            embeddings_name = "sentence"
-        except:
-            print("Install sentence-transformers and gpt4all")
-
-    elif llm_name == 'llamacpp':
-        try:
-            from langchain.llms import GPT4All
-            llm = GPT4All(
-                model='llms/ggml-gpt4all-l13b-snoozy.bin', 
-                n_ctx=1000, 
-                verbose=True)
-            embeddings_name = "sentence"
-        except:
-            print("Install sentence-transformers and gpt4all")
+    llm = ChatOpenAI(
+        model_name='gpt-3.5-turbo',
+        openai_api_key=get_settings().openai_api_key)  
 
     vector_db = vector_database(
         collection_name=collection_name,
-        embeddings_name=embeddings_name
         )
 
     if stored_memory:

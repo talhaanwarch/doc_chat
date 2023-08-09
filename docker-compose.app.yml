@@ -11,22 +11,6 @@ services:
     networks:
       - milvus
 
-  postgres:
-    image: postgres:latest
-    container_name: postgres
-    env_file:
-      - .env
-    volumes:
-      - sqldb:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-    networks:
-      - milvus
-    # command: -p 5433 # iam unable to run authend on 5433
-
-
-volumes:
-  sqldb:
 
 networks:
   milvus:

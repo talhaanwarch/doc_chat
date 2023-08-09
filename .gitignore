@@ -14,3 +14,5 @@ __pycache__/
 notebooks
 *.ipynb_checkpoints/
 notes.txt
+*llms
+*stacks

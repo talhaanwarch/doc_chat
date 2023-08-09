@@ -1,182 +1,107 @@
-# Production level scalable Documents ChatBot with a customizable dashboard
+# Scalable Web Application for PDF Chat using ChatGPT
 
-```diff
-- This repo is under active devolopment so might be documentation is outdated.
-- For deployment version look into deploy branch. The deploy branch is deployed in following link
-- https://gptdemo.talhaanwar.com/login
+Welcome to our Web Application for PDF Chat powered by OpenAI's ChatGPT! This application allows users to upload PDF documents, utilize ChatGPT for natural language processing, and engage in interactive conversations with their data. Each user's data is kept separate from others, ensuring privacy and security.  
 
-```
+Website: https://gptdemo.talhaanwar.com/  
+Dasboard: https://dashboard.talhaanwar.com/  
+Server: https://server-monitor.talhaanwar.com/  
 
+This README will guide you through the deployment and usage of the application.  
 
-## About
-ChatBot to do conversation based on stored data provided by the user. Here is a flow diagram
-![image](https://github.com/talhaanwarch/doc_chat_api/assets/37379131/ebd2f33e-2383-4120-87ae-1f136e8334ef)
+## Table of Contents
 
+- [Introduction](#introduction)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Technologies Used](#technologies-used)
+- [Contributing](#contributing)
+- [License](#license)
 
-Here are a few advantages.
-* The chatBot uses a Retriever-Generator base module to reduce costs. The Retriever fetches the text of concern while the Generator creates a response from the fetched content.
-* OpenAI GPT3.5, and open-source models are supported
+## Introduction
 
-* Embeddings are created  and stored in a Milvus vector database.
-* History is stored in PostgreSQL
+The Web Application for PDF Chat is designed to provide an interactive and user-friendly experience for users to engage with their uploaded PDF documents. The application integrates OpenAI's GPT-3.5, which is a powerful natural language processing model, to enable seamless conversations and answer retrieval based on user queries. The backend is built using FastAPI, and user authentication is also included to ensure secure access to individual data.
 
+## Features
 
-## Prerequisite
-* Install [docker engine](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
-* Install [docker compose](https://docs.docker.com/compose/install/linux/#install-using-the-repository)
-* Install and run [milvus](https://milvus.io/docs/install_standalone-docker.md). See guide to run for more info.  
-* Install and run [tooljet](https://docs.tooljet.com/docs/setup/docker/). See guide to run for more info.  
-* Install [langchain](https://python.langchain.com/en/latest/index.html) / [LlamaIndex](https://gpt-index.readthedocs.io/en/latest/)
+- Upload PDF documents for processing and analysis.
+- Engage in interactive conversations with the uploaded data using OpenAI's GPT-3.5.
+- Retrieve answers to specific questions from the uploaded PDFs.
+- Secure user authentication and data separation to ensure privacy.
+- Dashboard powered by AppSmith for easy navigation and visualization.
 
-* Download open-source model weights from [GPT4All](https://gpt4all.io/index.html) and place in llms folder. The models I have tested are 
-    * ggml-gpt4all-j.bin (commercial licensable)     
-    * ggml-gpt4all-l13b-snoozy.bin (non-commercial licensable)
-* Put openAI API key in `example.env` in case if you want to use openAI model and replace `example.env` to `.env`
- # Dashbaord
-Dashboard is accessible at port 8005.  
-This is simplest dashboard that display the usage.
+## Prerequisites
 
-![dasboard](imgs/dashboard.png)
+Before deploying the application, ensure that you have the following components installed:
 
+1. Docker
+2. Docker Compose
+3. S3 account
+4. OpenAI API
 
-# API Documentation
+## Installation
 
-This documentation provides information about the API endpoints available in the FastAPI-based API.
-
-## Models
-
-### DocModel
-
-Represents the model for adding documents for ingestion.
-
-| Field           | Type             | Description                                                |
-| --------------- | ---------------- | ---------------------------------------------------------- |
-| urls        | list[str]              | List having urls of doc files.              |
-| embeddings_name | str (optional) | The name of the embeddings ['openai', 'sentence'] (default: 'openai').      |
-| client_id | EmailID   | Email ID of the user (server as a collection ID in milvus) |
-| drop_existing_embeddings | bool (optional) | Whether to drop existing embeddings (default: False).    |
-
-### QueryModel
-
-Represents the model for processing user queries.
-
-| Field           | Type                                       | Description                                                |
-| --------------- | ------------------------------------------ | ---------------------------------------------------------- |
-| text            | str                                        | The text for the query.                                    |
-| session_id      | uuid4                                        | The session ID for the query.                              |
-| llm_name        | str (optional) | The name of the language model ['openai', 'llamacpp', 'gpt4all'] (default: 'openai').       |
-| client_id | EmailID   | Email ID of the user (server as a collection ID in milvus) |
-
-### DeleteSession
-
-Represents the model for deleting a session from the database.
-
-| Field             | Type              | Description                                   |
-| ----------------- | ----------------- | --------------------------------------------- |
-| session_id        | uuid4               | The session ID to delete.                     |
-
-## Endpoints
-
-### `POST /doc_ingestion`
-
-Endpoint to add documents for ingestion.
-
-#### Request
-
-- Body Parameters:
-  - `doc` (DocModel): The document ingestion details.
-
-#### Response
-
-- Status Code: 200 (OK)
-- Body: `{"message": "Documents added successfully"}`
-
-### `POST /query`
-
-Endpoint to process user queries.
-
-#### Request
-
-- Body Parameters:
-  - `query` (QueryModel): The user query details.
-
-#### Response
-
-- Body: `{"answer": str, "cost": dict, "source":list}`
-```
--- answer : answer from the documents
--- cost "cost": {
-    "successful_requests": int,
-    "total_cost": float,
-    "total_tokens": int,
-    "prompt_tokens": int,
-    "completion_tokens": int
-  },
-  --source: list of str showing the source of the extracted answer
-```
-### `POST /delete`
-
-Endpoint to delete a session from the database.
-
-#### Request
-
-- Body Parameters:
-  - `session` (DeleteSession): The session deletion details.
-
-#### Response
-
-- Body: The response message indicating the success or failure of the deletion operation.
-
-## Example Usage
-
-### Adding Documents for Ingestion
+1. Clone the repository from GitHub:
 
 ```bash
-$ curl -X 'POST' \
-  'http://0.0.0.0:8000/doc_ingestion' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "urls": [
-    "https://raw.githubusercontent.com/talhaanwarch/doc_chat_api/main/data/0.txt"
-  ],
-  "client_id": "admin@admin.com",
-  "embeddings_name": "openai",
-  "drop_existing_embeddings": false
-}'
+git clone https://github.com/talhaanwarch/doc_chat.git
 ```
 
-### Processing User Queries
+2. Navigate to the project directory:
 
 ```bash
-$ curl -X 'POST' \
-  'http://0.0.0.0:8000/query' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "text": "What is quadratic funding?",
-  "session_id": "824dcfc3-9ee2-40d7-bb2e-693fbc7696ca",
-  "client_id": "admin@admin.com",
-  "llm_name": "openai"
-}'
+cd doc_chat
 ```
 
-### Deleting a Session
+3. Create an `.env` file and set the required environment variables. You can use the `example.env` file as a reference.
 
 ```bash
-$ curl -X POST -H "Content-Type: application/json" -d '{
-    "session_id": "9c17659b-f3f6-45c5-8590-1a349102512b"
-}' http://localhost:8000/delete
+cp example.env .env
 ```
 
+4. Build and deploy the application using the provided `deploy.sh` script:
 
-# Guide to run
-
-```
-docker compose -f docker-compose.milvus.yml up --build -d
-docker compose -f docker-compose.app.yml up --build -d
-docker compose -f docker-compose.tooljet.yml up --build -d
+```bash
+./deploy.sh
 ```
 
-# Note:
-The Chatbot is also implemented using [haystack](https://github.com/talhaanwarch/openai-chatbot/tree/haystack)
+This script will stop and remove any existing Docker containers, clear dangling volumes, and then deploy the three Docker Compose files for the backend, Milvus vector database, and ToolJet dashboard.
+
+## Usage
+
+Once the application is successfully deployed, you can access the following pages from your web browser:
+
+- **Upload Page:** This page allows users to upload their PDF documents for processing.
+
+- **Query Page:** Engage in interactive conversations with your uploaded PDF data. Ask questions, get answers, and explore the content.
+
+- **Login Page:** Securely log in to access your uploaded data. Each user's data is separated from others.
+
+- **Logout Page:** Log out from your session to ensure data privacy.
+
+- **Registration Page:** New users can register to create an account and start using the application.
+
+## Technologies Used
+
+The Web Application for PDF Chat leverages the following technologies:
+
+- FastAPI: For building the backend and handling user authentication.
+- Flask: For the frontend and user interface.
+- PostgreSQL: As the database for user-related information.
+- Docker: For containerizing the application and its components.
+- Docker Compose: For orchestrating the deployment of multiple containers.
+- Milvus: As the vector database for efficient data retrieval.
+- ToolJet: For creating the interactive dashboard.
+
+## Contributing
+
+We welcome contributions to enhance the features and usability of our Web Application for PDF Chat. If you find any bugs or have suggestions for improvements, please feel free to open issues or submit pull requests.
+
+## License
+
+The Web Application for PDF Chat is open-source and available under the CC-BY-NC. You are free to use, modify, and distribute the code as per the terms of the license.
+
+---
+
+Thank you for using our Web Application for PDF Chat! If you have any questions or need further assistance, please don't hesitate to contact us or raise an issue on GitHub. Happy chatting with your data!
